@@ -18,6 +18,7 @@ public class BattleRoyale extends JavaPlugin{
 	public void onEnable() {
 		this.log = this.getLogger();
 		this.log.info("BattleRoyale configre preparing....");
+
 		this.getCommand("brcleardata").setExecutor(new StartPosCmd(this));
 
 		PluginManager pm = this.getServer().getPluginManager();

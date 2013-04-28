@@ -19,4 +19,5 @@ abstract class BRCommandExecutor implements CommandExecutor{
 
 	@Override
 	abstract public boolean onCommand(CommandSender paramCommandSender, Command paramCommand, String paramString,String[] paramArrayOfString);
+
 }
