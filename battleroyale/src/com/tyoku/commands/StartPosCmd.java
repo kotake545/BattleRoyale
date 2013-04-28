@@ -4,15 +4,18 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.tyoku.BattleRoyale;
 
-public class StartPosCmd extends BRCommandExecutor{
+public class StartPosCmd implements CommandExecutor{
+	@SuppressWarnings("unused")
+	private BattleRoyale plugin;
 
-	public StartPosCmd(BattleRoyale plugin) {
-		super(plugin);
+	public StartPosCmd(BattleRoyale battleRoyale) {
+		this.plugin = battleRoyale;
 	}
 
 	@Override
@@ -30,7 +33,7 @@ public class StartPosCmd extends BRCommandExecutor{
 				World w = myLoc.getWorld();
 				Location loc = new Location(w, x, y, z); //defines new location
 
-				sender.sendMessage(ChatColor.RED + "てれぽーーーと！！！！");
+				sender.sendMessage(ChatColor.RED + "ワープ！！！！！");
 				player.teleport(loc);
 
 			} else {

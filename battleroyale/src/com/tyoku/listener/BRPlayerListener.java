@@ -8,11 +8,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
 public class BRPlayerListener implements Listener {
+	@SuppressWarnings("unused")
 	private Logger log;
 
 	@EventHandler
@@ -26,12 +26,4 @@ public class BRPlayerListener implements Listener {
 	        player.sendMessage(ChatColor.GOLD + "よく来たな!もっとダイヤモンドをくれてやろう、このとんでもない成金め!!");
 	    }
 	}
-
-	@EventHandler
-	public void onWorldLoad(WorldLoadEvent event){
-
-		this.log.info(ChatColor.YELLOW + "BattleRoyale Start.");
-	}
-
-
 }

@@ -2,6 +2,6 @@ name: battleroyale
 main: com.tyoku.BattleRoyale
 version: 0.0.1
 commands:
-   basic:
-      description: hello
-      usage: /brcleardata yes
+   warp:
+      description: warp test
+      usage: /warp

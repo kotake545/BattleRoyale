@@ -11,7 +11,8 @@ import com.tyoku.listener.BRPlayerListener;
 
 public class BattleRoyale extends JavaPlugin{
 	private Logger log;
-	public DBManager dbm = new DBManager("battleroyale.sqlite3");
+	@SuppressWarnings("unused")
+	private DBManager dbm = new DBManager("battleroyale.sqlite3");
 	public final BRPlayerListener pl = new BRPlayerListener();
 
 	@Override
@@ -19,7 +20,7 @@ public class BattleRoyale extends JavaPlugin{
 		this.log = this.getLogger();
 		this.log.info("BattleRoyale configre preparing....");
 
-		this.getCommand("brcleardata").setExecutor(new StartPosCmd(this));
+		this.getCommand("warp").setExecutor(new StartPosCmd(this));
 
 		PluginManager pm = this.getServer().getPluginManager();
 		pm.registerEvents(pl, this);
