@@ -9,8 +9,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 
 import com.tyoku.BattleRoyale;
+import com.tyoku.util.BRUtils;
 
 public class BRPlayerListener implements Listener {
 	private Logger log;
@@ -23,7 +25,7 @@ public class BRPlayerListener implements Listener {
 
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event) {
-	    Player player = event.getPlayer(); // Joinしたプレイヤー
+	    Player player = event.getPlayer();
 
 	    //プリセット位置へプレイヤーを飛ばす
 	    int x = this.plugin.getConfig().getInt("classroom.pos.x");
@@ -44,5 +46,15 @@ public class BRPlayerListener implements Listener {
 	    this.log.info(String.format("プレイヤーを(X:%d Y:%d Z:%d)へ転送", x,y,z));
         player.teleport(nLoc);
         player.sendMessage(ChatColor.GOLD + "バトロワへようこそ！");
+	}
+
+	@EventHandler
+	public void onPlayerMove(PlayerMoveEvent event){
+	    Player player = event.getPlayer();
+	    if(!BRUtils.isGameArea(this.plugin, player)){
+	        player.sendMessage(ChatColor.RED + "ゲームエリア外");
+	    }else{
+	        player.sendMessage(ChatColor.GOLD + "ゲームエリア内");
+	    }
 	}
 }

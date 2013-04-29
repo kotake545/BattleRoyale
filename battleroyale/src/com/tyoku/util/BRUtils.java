@@ -26,4 +26,35 @@ public class BRUtils {
             p.sendMessage(message);
         }
     }
+
+    /**
+     * プレイヤーがBRゲームエリア内に存在するか否かを判定する。
+     * @param plugin
+     * @param player
+     * @return
+     */
+    static public boolean isGameArea(BattleRoyale plugin, Player player){
+	    int x1 = plugin.getConfig().getInt("gamearea.pos1.x");
+	    int z1 = plugin.getConfig().getInt("gamearea.pos1.z");
+	    int x2 = plugin.getConfig().getInt("gamearea.pos2.x");
+	    int z2 = plugin.getConfig().getInt("gamearea.pos2.z");
+	    int w = 0;
+	    if(x1 < x2){
+	    	w = x1;
+	    	x1 = x2;
+	    	x2 = w;
+	    }
+	    if(z1 < z2){
+	    	w = z1;
+	    	z1 = z2;
+	    	z2 = w;
+	    }
+	    int xp = player.getLocation().getBlockX();
+	    int zp = player.getLocation().getBlockZ();
+	    if(x1 >= xp && xp >= x2 && z1 >= zp && zp >= z2){
+	    	return true;
+	    }
+
+    	return false;
+    }
 }
