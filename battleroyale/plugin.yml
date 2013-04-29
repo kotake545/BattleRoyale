@@ -6,8 +6,8 @@ commands:
       description: 初回スポーン位置を設定します。オプションでx,y,z座標を整数で指定も可能。
       usage: /setroom [x y x]
    brgame:
-      description: バトロワの開始と終了をアナウンスします。
-      usage: /brgame [start|stop]
+      description: バトロワの開始と終了を操作。または現在のステータスを参照します。
+      usage: /brgame [start|stop|status]
    setbrarea:
       description: ゲームエリアを1と2の対角の四角形エリアで設定します（高さ無視）。座標を指定すればその座標を設定します。因みに、プレイヤーがエリアから出ると5秒後、爆発して死亡します。
       usage: /setbrarea [1|2] [[x] [z]]

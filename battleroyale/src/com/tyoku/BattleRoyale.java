@@ -1,6 +1,8 @@
 package com.tyoku;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import org.bukkit.plugin.PluginManager;
@@ -11,12 +13,14 @@ import com.tyoku.commands.GameArea;
 import com.tyoku.commands.StartPosCmd;
 import com.tyoku.db.DBManager;
 import com.tyoku.dto.BRManager;
+import com.tyoku.dto.BRPlayer;
 import com.tyoku.listener.BRPlayerListener;
 
 public class BattleRoyale extends JavaPlugin{
 	private Logger log;
 	private File config;
-	private BRManager manager;
+	private BRManager brManager;
+	private Map<String, BRPlayer> playerStat;
 
 	@SuppressWarnings("unused")
 	private DBManager dbm = new DBManager("battleroyale.sqlite3");
@@ -29,7 +33,9 @@ public class BattleRoyale extends JavaPlugin{
 		if (!config.exists()) {
 		    this.saveDefaultConfig();
 		}
-		setManager(new BRManager());
+		setBrManager(new BRManager());
+
+		this.playerStat = new HashMap<String, BRPlayer>();
 
 		//コマンド登録
 		this.log.info("BattleRoyale commands preparing....");
@@ -49,12 +55,20 @@ public class BattleRoyale extends JavaPlugin{
 		this.log.info("BattleRoyale Disabled.");
 	}
 
-	public BRManager getManager() {
-		return manager;
+	public BRManager getBrManager() {
+		return brManager;
 	}
 
-	public void setManager(BRManager manager) {
-		this.manager = manager;
+	public void setBrManager(BRManager manager) {
+		this.brManager = manager;
+	}
+
+	public Map<String, BRPlayer> getPlayerStat() {
+		return playerStat;
+	}
+
+	public void setPlayerStat(Map<String, BRPlayer> playerStat) {
+		this.playerStat = playerStat;
 	}
 
 }

@@ -1,14 +1,13 @@
 package com.tyoku.dto;
 
-import com.tyoku.util.BRStatus;
 
 public class BRManager {
-	private BRStatus gameStatus = BRStatus.PREPARE;
+	private BRGameStatus gameStatus = BRGameStatus.PREPARE;
 
-	public BRStatus getGameStatus() {
+	public BRGameStatus getGameStatus() {
 		return gameStatus;
 	}
-	public void setGameStatus(BRStatus gameStatus) {
+	public void setGameStatus(BRGameStatus gameStatus) {
 		this.gameStatus = gameStatus;
 	}
 }
