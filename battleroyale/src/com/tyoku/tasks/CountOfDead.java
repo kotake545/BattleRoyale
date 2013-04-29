@@ -8,6 +8,7 @@ import com.tyoku.BattleRoyale;
 import com.tyoku.dto.BRPlayer;
 import com.tyoku.dto.BRPlayerStatus;
 import com.tyoku.util.BRConst;
+import com.tyoku.util.BRUtils;
 
 public class CountOfDead extends BukkitRunnable {
 	private final BattleRoyale plugin;

@@ -105,6 +105,8 @@ public class BRPlayerListener implements Listener {
 			brp.setStatus(BRPlayerStatus.DEAD);
 			player.setPlayerListName(BRConst.LIST_COLOR_DEAD+player.getName());
 			plugin.getPlayerStat().put(player.getName(),brp);
+	    }if(BRUtils.isAlertArea(this.plugin, player)){
+			player.sendMessage(ChatColor.RED + "エリア外付近です。エリア外に出ると爆死します。");
 	    }else{
 	        player.sendMessage(ChatColor.GOLD + "ゲームエリア内");
 	    }
