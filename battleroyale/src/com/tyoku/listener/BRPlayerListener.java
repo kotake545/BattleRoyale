@@ -11,13 +11,11 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
-import org.bukkit.scheduler.BukkitTask;
 
 import com.tyoku.BattleRoyale;
 import com.tyoku.dto.BRGameStatus;
 import com.tyoku.dto.BRPlayer;
 import com.tyoku.dto.BRPlayerStatus;
-import com.tyoku.tasks.CountOfDead;
 import com.tyoku.util.BRUtils;
 
 public class BRPlayerListener implements Listener {
@@ -95,14 +93,14 @@ public class BRPlayerListener implements Listener {
 	    		|| BRPlayerStatus.DEAD.equals(brp.getStatus())
 	    		|| !BRGameStatus.PLAYING.equals(this.plugin.getBrManager().getGameStatus())
 	    		){
-
-	        player.sendMessage(ChatColor.RED + "RETURN");
 	    	return;
 	    }
 	    if(!BRUtils.isGameArea(this.plugin, player)){
-	        player.sendMessage(ChatColor.RED + "ゲームエリア外");
-	        @SuppressWarnings("unused")
-			BukkitTask task = new CountOfDead(this.plugin, player).runTaskLater(plugin, 20);
+			player.sendMessage(ChatColor.RED + "ゲームエリア外に出た為、5秒後に爆死します。");
+			BRUtils.deadCount(player, 5);
+
+			brp.setStatus(BRPlayerStatus.DEAD);
+			plugin.getPlayerStat().put(player.getName(),brp);
 	    }else{
 	        player.sendMessage(ChatColor.GOLD + "ゲームエリア内");
 	    }

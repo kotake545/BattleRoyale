@@ -40,6 +40,5 @@ public class CountOfDead extends BukkitRunnable {
 		player.setHealth(0);
 		brp.setStatus(BRPlayerStatus.DEAD);
 		plugin.getPlayerStat().put(player.getName(),brp);
-		plugin.getServer().broadcastMessage(player.getName() + "is dead.....");
 	}
 }

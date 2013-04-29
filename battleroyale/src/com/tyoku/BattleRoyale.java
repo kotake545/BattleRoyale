@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitTask;
 
 import com.tyoku.commands.BrGame;
 import com.tyoku.commands.GameArea;
@@ -21,6 +22,7 @@ public class BattleRoyale extends JavaPlugin{
 	private File config;
 	private BRManager brManager;
 	private Map<String, BRPlayer> playerStat;
+	private Map<String,BukkitTask> playerTask;
 
 	@SuppressWarnings("unused")
 	private DBManager dbm = new DBManager("battleroyale.sqlite3");
@@ -36,6 +38,7 @@ public class BattleRoyale extends JavaPlugin{
 		setBrManager(new BRManager());
 
 		this.playerStat = new HashMap<String, BRPlayer>();
+		this.setPlayerTask(new HashMap<String, BukkitTask>());
 
 		//コマンド登録
 		this.log.info("BattleRoyale commands preparing....");
@@ -69,6 +72,14 @@ public class BattleRoyale extends JavaPlugin{
 
 	public void setPlayerStat(Map<String, BRPlayer> playerStat) {
 		this.playerStat = playerStat;
+	}
+
+	public Map<String,BukkitTask> getPlayerTask() {
+		return playerTask;
+	}
+
+	public void setPlayerTask(Map<String,BukkitTask> playerTask) {
+		this.playerTask = playerTask;
 	}
 
 }

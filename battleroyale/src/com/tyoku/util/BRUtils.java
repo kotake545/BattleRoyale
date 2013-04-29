@@ -1,5 +1,6 @@
 package com.tyoku.util;
 
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import com.tyoku.BattleRoyale;
@@ -56,6 +57,26 @@ public class BRUtils {
 	    }
 
     	return false;
+    }
+
+    /**
+     * 指定のプレイヤーを指定カウント後に爆死させる。
+     * @param player
+     * @param count
+     */
+    static public void deadCount(Player player, int count){
+		for (int i = count; i > 0; i--) {
+			try {
+				player.sendMessage(ChatColor.RED + "爆発まで・・・"+i+"秒。");
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				System.out.println(e);
+			}
+		}
+		float explosionPower = 4F;
+		player.sendMessage(ChatColor.RED + "ByeBye!! BOOOOOOOOOOOM!!!");
+		player.getWorld().createExplosion(player.getLocation(), explosionPower);
+		player.setHealth(0);
     }
 
 }
