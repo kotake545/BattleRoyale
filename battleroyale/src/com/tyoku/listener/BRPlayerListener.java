@@ -4,6 +4,7 @@ import java.util.logging.Logger;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -11,11 +12,15 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.map.MapView;
+import org.bukkit.map.MapView.Scale;
 
 import com.tyoku.BattleRoyale;
 import com.tyoku.dto.BRGameStatus;
 import com.tyoku.dto.BRPlayer;
 import com.tyoku.dto.BRPlayerStatus;
+import com.tyoku.map.BrMapRender;
 import com.tyoku.util.BRConst;
 import com.tyoku.util.BRUtils;
 
@@ -67,24 +72,25 @@ public class BRPlayerListener implements Listener {
 		}
 		this.plugin.getPlayerStat().put(brps.getName(), brps);
 
-        player.sendMessage(ChatColor.GOLD + "バトロワへようこそ！"+appendMsg);
+		//地図配布
+		//MapView mv = this.plugin.getServer().createMap(player.getWorld());
+
+        ItemStack tmap = new ItemStack( Material.MAP, 1 );
+        MapView mapview = this.plugin.getServer().getMap( tmap.getDurability() );
+        mapview.addRenderer(new BrMapRender(this.plugin));
+        mapview.setCenterX(player.getLocation().getBlockX());
+        mapview.setCenterZ(player.getLocation().getBlockZ());
+        mapview.setWorld(player.getWorld());
+        mapview.setScale( Scale.FAR );
+		player.getInventory().addItem(new ItemStack(Material.MAP, 1, mapview.getId()));
+
+		player.sendMessage(ChatColor.GOLD + "バトロワへようこそ！" + appendMsg);
 
 	}
 
 	@EventHandler
 	public void onPlayerRespawn(PlayerRespawnEvent event) {
-	    Player player = event.getPlayer();
-
-	    //プリセット位置へプレイヤーを飛ばす
-	    int x = this.plugin.getConfig().getInt("classroom.pos.x");
-	    int y = this.plugin.getConfig().getInt("classroom.pos.y");
-	    int z = this.plugin.getConfig().getInt("classroom.pos.z");
-
-	    World w = player.getWorld();
-	    Location nLoc = new Location(w, x, y, z);
-        player.teleport(nLoc);
-	    this.log.info(String.format("プレイヤーを(X:%d Y:%d Z:%d)へ転送", x,y,z));
-        player.sendMessage(ChatColor.GOLD + "しばらくそこでおとなしくしててください。");
+		BRUtils.teleportRoom(plugin, event.getPlayer());
 	}
 
 	@EventHandler
@@ -100,15 +106,17 @@ public class BRPlayerListener implements Listener {
 	    }
 	    if(!BRUtils.isGameArea(this.plugin, player)){
 			player.sendMessage(ChatColor.RED + "ゲームエリア外に出た為、5秒後に爆死します。");
-			BRUtils.deadCount(player, 5);
 
+			//殺してステータス変更
+			BRUtils.deadCount(player, 5);
 			brp.setStatus(BRPlayerStatus.DEAD);
 			player.setPlayerListName(BRConst.LIST_COLOR_DEAD+player.getName());
 			plugin.getPlayerStat().put(player.getName(),brp);
+
 	    }if(BRUtils.isAlertArea(this.plugin, player)){
 			player.sendMessage(ChatColor.RED + "エリア外付近です。エリア外に出ると爆死します。");
 	    }else{
-	        player.sendMessage(ChatColor.GOLD + "ゲームエリア内");
+	        //player.sendMessage(ChatColor.GOLD + "ゲームエリア内");
 	    }
 	}
 }

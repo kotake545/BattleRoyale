@@ -1,6 +1,8 @@
 package com.tyoku.util;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import com.tyoku.BattleRoyale;
@@ -115,6 +117,31 @@ public class BRUtils {
 		player.sendMessage(ChatColor.RED + "ByeBye!! BOOOOOOOOOOOM!!!");
 		player.getWorld().createExplosion(player.getLocation(), explosionPower);
 		player.setHealth(0);
+    }
+
+    /**
+     * プレイヤーを部屋に飛ばす
+     * @param plugin
+     * @param player
+     */
+    static public void teleportRoom(BattleRoyale plugin, Player player){
+	    Location nLoc = getRoomLocation(plugin, player.getWorld());
+        player.teleport(nLoc);
+        player.sendMessage(ChatColor.GOLD + "しばらくそこでおとなしくしててください。");
+    }
+
+    /**
+     * 設定した部屋のロケーションを取得する。
+     * @param plugin
+     * @param world
+     * @return
+     */
+    static public Location getRoomLocation(BattleRoyale plugin, World world){
+	    //プリセット位置へプレイヤーを飛ばす
+	    int x = plugin.getConfig().getInt("classroom.pos.x");
+	    int y = plugin.getConfig().getInt("classroom.pos.y");
+	    int z = plugin.getConfig().getInt("classroom.pos.z");
+	    return new Location(world, x, y, z);
     }
 
 }

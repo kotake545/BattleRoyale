@@ -16,6 +16,7 @@ import com.tyoku.db.DBManager;
 import com.tyoku.dto.BRManager;
 import com.tyoku.dto.BRPlayer;
 import com.tyoku.listener.BRPlayerListener;
+import com.tyoku.listener.MapListener;
 
 public class BattleRoyale extends JavaPlugin{
 	private Logger log;
@@ -49,6 +50,7 @@ public class BattleRoyale extends JavaPlugin{
 		//リスナー登録
 		PluginManager pm = this.getServer().getPluginManager();
 		pm.registerEvents(new BRPlayerListener(this), this);
+		pm.registerEvents(new MapListener(this), this);
 
 		this.log.info("BattleRoyale Enabled.");
 	}
