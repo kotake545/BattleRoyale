@@ -16,6 +16,7 @@ import com.tyoku.BattleRoyale;
 import com.tyoku.dto.BRGameStatus;
 import com.tyoku.dto.BRPlayer;
 import com.tyoku.dto.BRPlayerStatus;
+import com.tyoku.util.BRConst;
 import com.tyoku.util.BRUtils;
 
 public class BRPlayerListener implements Listener {
@@ -58,8 +59,10 @@ public class BRPlayerListener implements Listener {
 				|| BRGameStatus.PREPARE.equals(this.plugin.getBrManager().getGameStatus())
 				){
 			brps.setStatus(BRPlayerStatus.PLAYING);
+			player.setPlayerListName(BRConst.LIST_COLOR_PLAYER + player.getName());
 		}else{
 			brps.setStatus(BRPlayerStatus.DEAD);
+			player.setPlayerListName(BRConst.LIST_COLOR_DEAD + player.getName());
 			appendMsg = "ゲームは既に始まっています。次回、ご参加ください。";
 		}
 		this.plugin.getPlayerStat().put(brps.getName(), brps);
@@ -100,6 +103,7 @@ public class BRPlayerListener implements Listener {
 			BRUtils.deadCount(player, 5);
 
 			brp.setStatus(BRPlayerStatus.DEAD);
+			player.setPlayerListName(BRConst.LIST_COLOR_DEAD+player.getName());
 			plugin.getPlayerStat().put(player.getName(),brp);
 	    }else{
 	        player.sendMessage(ChatColor.GOLD + "ゲームエリア内");

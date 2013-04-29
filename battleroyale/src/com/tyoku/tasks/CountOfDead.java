@@ -7,6 +7,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import com.tyoku.BattleRoyale;
 import com.tyoku.dto.BRPlayer;
 import com.tyoku.dto.BRPlayerStatus;
+import com.tyoku.util.BRConst;
 
 public class CountOfDead extends BukkitRunnable {
 	private final BattleRoyale plugin;
@@ -38,6 +39,7 @@ public class CountOfDead extends BukkitRunnable {
 		player.sendMessage(ChatColor.RED + "ByeBye!! BOOOOOOOOOOOM!!!");
 		player.getWorld().createExplosion(player.getLocation(), explosionPower);
 		player.setHealth(0);
+		player.setPlayerListName(BRConst.LIST_COLOR_DEAD+player.getName());
 		brp.setStatus(BRPlayerStatus.DEAD);
 		plugin.getPlayerStat().put(player.getName(),brp);
 	}
