@@ -76,14 +76,33 @@ public class BRPlayerListener implements Listener {
 		//MapView mv = this.plugin.getServer().createMap(player.getWorld());
 
         ItemStack tmap = new ItemStack( Material.MAP, 1 );
-        MapView mapview = this.plugin.getServer().getMap( tmap.getDurability() );
-        mapview.addRenderer(new BrMapRender(this.plugin));
-        mapview.setCenterX(player.getLocation().getBlockX());
-        mapview.setCenterZ(player.getLocation().getBlockZ());
-        mapview.setWorld(player.getWorld());
-        mapview.setScale( Scale.FAR );
-		player.getInventory().addItem(new ItemStack(Material.MAP, 1, mapview.getId()));
+		player.sendMessage(ChatColor.GOLD + "Durability()：" + tmap.getDurability());
+        MapView mapview = this.plugin.getServer().getMap(tmap.getDurability());
+//        for (MapRenderer mr : mapview.getRenderers()) {
+//        	mapview.removeRenderer(mr);
+//        }
+        boolean hasBRmap = false;
+        int breakNum = 1;
+        while(mapview.getRenderers().size() > breakNum){
+        	if(mapview.getRenderers().get(mapview.getRenderers().size()-1) instanceof BrMapRender){
+        		hasBRmap = true;
+        		breakNum = 2;
+        	}else{
+        		mapview.removeRenderer(mapview.getRenderers().get(mapview.getRenderers().size()-1));
+        	}
+        }
+		player.sendMessage(ChatColor.GOLD + "レンダー：" + appendMsg);
+		if(!hasBRmap){
+	        mapview.addRenderer(new BrMapRender(this.plugin, player));
+	        mapview.setCenterX(player.getLocation().getBlockX());
+	        mapview.setCenterZ(player.getLocation().getBlockZ());
+	        mapview.setWorld(player.getWorld());
+	        mapview.setScale( Scale.FAR );
+		}
+        this.log.info("レンダーサイズ:"+ mapview.getRenderers().size());
 
+    	player.getInventory().clear();
+        player.getInventory().addItem(tmap);
 		player.sendMessage(ChatColor.GOLD + "バトロワへようこそ！" + appendMsg);
 
 	}

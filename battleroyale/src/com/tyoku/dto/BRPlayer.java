@@ -2,6 +2,7 @@ package com.tyoku.dto;
 
 public class BRPlayer {
 	private String name;
+	private short durability;
 	private BRPlayerStatus status;
 	private int playCount = 0;
 
@@ -22,5 +23,11 @@ public class BRPlayer {
 	}
 	public void setPlayCount(int playCount) {
 		this.playCount = playCount;
+	}
+	public short getDurability() {
+		return durability;
+	}
+	public void setDurability(short durability) {
+		this.durability = durability;
 	}
 }
