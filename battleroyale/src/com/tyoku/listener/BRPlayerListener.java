@@ -4,7 +4,6 @@ import java.util.logging.Logger;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -12,15 +11,11 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.map.MapView;
-import org.bukkit.map.MapView.Scale;
 
 import com.tyoku.BattleRoyale;
 import com.tyoku.dto.BRGameStatus;
 import com.tyoku.dto.BRPlayer;
 import com.tyoku.dto.BRPlayerStatus;
-import com.tyoku.map.BrMapRender;
 import com.tyoku.util.BRConst;
 import com.tyoku.util.BRUtils;
 
@@ -72,43 +67,15 @@ public class BRPlayerListener implements Listener {
 		}
 		this.plugin.getPlayerStat().put(brps.getName(), brps);
 
-		//地図配布
-		//MapView mv = this.plugin.getServer().createMap(player.getWorld());
-
-        ItemStack tmap = new ItemStack( Material.MAP, 1 );
-		player.sendMessage(ChatColor.GOLD + "Durability()：" + tmap.getDurability());
-        MapView mapview = this.plugin.getServer().getMap(tmap.getDurability());
-//        for (MapRenderer mr : mapview.getRenderers()) {
-//        	mapview.removeRenderer(mr);
-//        }
-        boolean hasBRmap = false;
-        int breakNum = 1;
-        while(mapview.getRenderers().size() > breakNum){
-        	if(mapview.getRenderers().get(mapview.getRenderers().size()-1) instanceof BrMapRender){
-        		hasBRmap = true;
-        		breakNum = 2;
-        	}else{
-        		mapview.removeRenderer(mapview.getRenderers().get(mapview.getRenderers().size()-1));
-        	}
-        }
-		player.sendMessage(ChatColor.GOLD + "レンダー：" + appendMsg);
-		if(!hasBRmap){
-	        mapview.addRenderer(new BrMapRender(this.plugin, player));
-	        mapview.setCenterX(player.getLocation().getBlockX());
-	        mapview.setCenterZ(player.getLocation().getBlockZ());
-	        mapview.setWorld(player.getWorld());
-	        mapview.setScale( Scale.FAR );
-		}
-        this.log.info("レンダーサイズ:"+ mapview.getRenderers().size());
-
+		//インベントリを空にする。
     	player.getInventory().clear();
-        player.getInventory().addItem(tmap);
 		player.sendMessage(ChatColor.GOLD + "バトロワへようこそ！" + appendMsg);
 
 	}
 
 	@EventHandler
 	public void onPlayerRespawn(PlayerRespawnEvent event) {
+		event.getPlayer().getInventory().clear();
 		BRUtils.teleportRoom(plugin, event.getPlayer());
 	}
 

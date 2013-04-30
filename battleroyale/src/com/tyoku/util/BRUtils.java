@@ -2,10 +2,15 @@ package com.tyoku.util;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.map.MapView;
+import org.bukkit.map.MapView.Scale;
 
 import com.tyoku.BattleRoyale;
+import com.tyoku.map.BrMapRender;
 
 public class BRUtils {
 
@@ -142,6 +147,24 @@ public class BRUtils {
 	    int y = plugin.getConfig().getInt("classroom.pos.y");
 	    int z = plugin.getConfig().getInt("classroom.pos.z");
 	    return new Location(world, x, y, z);
+    }
+
+    /**
+     * 指定の番号を振ったBRマップを作成する。
+     * @param plugin
+     * @param player
+     * @param mapNo
+     * @return
+     */
+    static public ItemStack getBRMap(BattleRoyale plugin,Player player, short id){
+	    ItemStack tmap = new ItemStack( Material.MAP, 1 ,id);
+	    MapView mapview = plugin.getServer().getMap(id);
+	    mapview.addRenderer(new BrMapRender());
+		mapview.setCenterX(plugin.getConfig().getInt("classroom.pos.x"));
+		mapview.setCenterZ(plugin.getConfig().getInt("classroom.pos.z"));
+	    mapview.setWorld(player.getWorld());
+	    mapview.setScale( Scale.FAR );
+        return tmap;
     }
 
 }

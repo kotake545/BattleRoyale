@@ -1,16 +1,11 @@
 package com.tyoku.map;
 
-import java.util.logging.Logger;
-
 import org.bukkit.entity.Player;
 import org.bukkit.map.MapCanvas;
-import org.bukkit.map.MapCursorCollection;
 import org.bukkit.map.MapPalette;
 import org.bukkit.map.MapRenderer;
 import org.bukkit.map.MapView;
 import org.bukkit.map.MinecraftFont;
-
-import com.tyoku.BattleRoyale;
 
 /**
  * ゲーム用のマップ絵画
@@ -18,18 +13,6 @@ import com.tyoku.BattleRoyale;
  *
  */
 public class BrMapRender extends MapRenderer {
-	@SuppressWarnings("unused")
-	private Logger log;
-	@SuppressWarnings("unused")
-	private BattleRoyale plugin;
-	@SuppressWarnings("unused")
-	private Player player;
-
-	public BrMapRender(BattleRoyale plugin, Player player) {
-		this.plugin = plugin;
-		this.log = plugin.getLogger();
-		this.player = player;
-	}
 
 	@Override
 	public void render(MapView paramMapView, MapCanvas paramMapCanvas, Player paramPlayer) {
@@ -54,9 +37,9 @@ public class BrMapRender extends MapRenderer {
 		}
 
 		//既存カーソル削除
-        MapCursorCollection mcc = paramMapCanvas.getCursors();
-        while (mcc.size() > 0) {
-        	mcc.removeCursor(mcc.getCursor(0));
-        }
+//        MapCursorCollection mcc = paramMapCanvas.getCursors();
+//        while (mcc.size() > 0) {
+//        	mcc.removeCursor(mcc.getCursor(0));
+//        }
 	}
 }

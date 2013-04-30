@@ -30,7 +30,18 @@ public class BrGame extends BRCmdExe {
 			if(paramArrayOfString.length != 1){
 				return false;
 			}
+			if(!BRGameStatus.PREPARE.equals(this.plugin.getBrManager().getGameStatus())){
+				paramCommandSender.sendMessage(ChatColor.RED + "既に開始済みです。");
+				return true;
+			}
 			BRUtils.announce(this.plugin, "さぁ、ゲームの始まりです！");
+			Player[] ps = this.plugin.getServer().getOnlinePlayers();
+
+			//参加者にバトロワMAP配布
+			for(int i = 0; i < ps.length; i++){
+				ps[i].getInventory().addItem(BRUtils.getBRMap(plugin, ps[i], (short)i));
+			}
+
 			this.plugin.getBrManager().setGameStatus(BRGameStatus.PLAYING);
 
 		}else if("stop".equals(paramArrayOfString[0])){
