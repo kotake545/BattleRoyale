@@ -110,6 +110,36 @@ public class BRUtils {
     }
 
     /**
+     * プレイヤーが禁止エリア内に居る場合にtrueを返却します。
+     * @param plugin
+     * @param player
+     * @return
+     */
+	public static boolean isDeadArea(BattleRoyale plugin, Player player) {
+		int blockSize = 80;
+        int roomX = plugin.getConfig().getInt("classroom.pos.x");
+        int roomZ = plugin.getConfig().getInt("classroom.pos.z");
+        int map0X = roomX - (blockSize * 6 + blockSize / 2);
+        int map0Z = roomZ - (blockSize * 6 + blockSize / 2);
+        int playerX = player.getLocation().getBlockX();
+        int playerZ = player.getLocation().getBlockZ();
+        for(String deadArea : plugin.getDeadAreaBlocks()){
+        	int[] da = BRUtils.brMapBlok2XYs(deadArea);
+        	int daX = da[1]*blockSize + map0X;
+        	int daZ = da[0]*blockSize + map0Z;
+//        	player.sendMessage(String.format("MAP[a0]座標は(X:%s, Z:%s)", map0X, map0Z));
+//        	player.sendMessage(String.format("禁止エリア[%s]座標は(X:%s, Z:%s)", deadArea, daX, daZ));
+        	if(daX <= playerX
+        			&& playerX <= daX + blockSize
+        			&& daZ <= playerZ
+        			&& playerZ <= daZ + blockSize){
+        		return true;
+        	}
+        }
+		return false;
+	}
+
+    /**
      * 指定のプレイヤーを指定カウント後に爆死させる。
      * @param player
      * @param count

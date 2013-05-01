@@ -46,8 +46,8 @@ public class BattleRoyale extends JavaPlugin{
                 setBrManager(new BRManager());
 
                 this.randomMapBlocks = BRUtils.getRundumMRMapBlocks();
-                deadAreaBlocks = new ArrayList<String>();
                 nextAreaBlocks = new ArrayList<String>();
+                deadAreaBlocks = new ArrayList<String>();
 
                 this.playerStat = new HashMap<String, BRPlayer>();
                 this.setPlayerTask(new HashMap<String, BukkitTask>());
