@@ -40,7 +40,7 @@ public class BrMapRender extends MapRenderer {
                 BRUtils.drawBRBapBlocks(paramMapCanvas, plugin.getNextAreaBlocks(), MapPalette.matchColor(Color.YELLOW));
 
                 //デッドゾーンを赤塗り
-                BRUtils.drawBRBapBlocks(paramMapCanvas, plugin.getDeadAreaBlocks(), MapPalette.WHITE);
+                BRUtils.drawBRBapBlocks(paramMapCanvas, plugin.getDeadAreaBlocks(), MapPalette.RED);
 
                 //座標文字列絵画
                 int count = 0;

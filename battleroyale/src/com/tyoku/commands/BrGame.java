@@ -9,6 +9,7 @@ import org.bukkit.inventory.ItemStack;
 import com.tyoku.BattleRoyale;
 import com.tyoku.dto.BRGameStatus;
 import com.tyoku.dto.BRPlayer;
+import com.tyoku.tasks.CreateDeadZone;
 import com.tyoku.util.BRUtils;
 
 public class BrGame extends BRCmdExe {
@@ -47,6 +48,9 @@ public class BrGame extends BRCmdExe {
 			}
 
 			this.plugin.getBrManager().setGameStatus(BRGameStatus.PLAYING);
+
+			//禁止エリア作成非同期処理
+			this.plugin.setCreateZoneTask(new CreateDeadZone(this.plugin, 5).runTaskTimerAsynchronously(plugin,0, 60*20));
 
 		}else if("stop".equals(paramArrayOfString[0])){
 			if(paramArrayOfString.length != 1){

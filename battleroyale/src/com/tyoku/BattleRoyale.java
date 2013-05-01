@@ -30,6 +30,7 @@ public class BattleRoyale extends JavaPlugin{
         private List<String> randomMapBlocks;
         private List<String> deadAreaBlocks;
         private List<String> nextAreaBlocks;
+        private BukkitTask createZoneTask;
 
         @SuppressWarnings("unused")
         private DBManager dbm = new DBManager("battleroyale.sqlite3");
@@ -47,21 +48,6 @@ public class BattleRoyale extends JavaPlugin{
                 this.randomMapBlocks = BRUtils.getRundumMRMapBlocks();
                 deadAreaBlocks = new ArrayList<String>();
                 nextAreaBlocks = new ArrayList<String>();
-                deadAreaBlocks.add(randomMapBlocks.get(0));
-                deadAreaBlocks.add(randomMapBlocks.get(1));
-                deadAreaBlocks.add(randomMapBlocks.get(2));
-                deadAreaBlocks.add(randomMapBlocks.get(3));
-                deadAreaBlocks.add(randomMapBlocks.get(4));
-                nextAreaBlocks.add(randomMapBlocks.get(5));
-                nextAreaBlocks.add(randomMapBlocks.get(6));
-                nextAreaBlocks.add(randomMapBlocks.get(7));
-                nextAreaBlocks.add(randomMapBlocks.get(8));
-                for(String d : deadAreaBlocks){
-                	this.log.info("DeadArea:"+d);
-                }
-                for(String d : nextAreaBlocks){
-                	this.log.info("AlertArea:"+d);
-                }
 
                 this.playerStat = new HashMap<String, BRPlayer>();
                 this.setPlayerTask(new HashMap<String, BukkitTask>());
@@ -82,6 +68,10 @@ public class BattleRoyale extends JavaPlugin{
 
         @Override
         public void onDisable() {
+        	if(this.createZoneTask != null){
+        		this.createZoneTask.cancel();
+        		this.createZoneTask = null;
+        	}
                 this.log.info("BattleRoyale Disabled.");
         }
 
@@ -137,4 +127,12 @@ public class BattleRoyale extends JavaPlugin{
         public void setNextAreaBlocks(List<String> nextAreaBlocks) {
             this.nextAreaBlocks = nextAreaBlocks;
         }
+
+		public BukkitTask getCreateZoneTask() {
+			return createZoneTask;
+		}
+
+		public void setCreateZoneTask(BukkitTask createZoneTask) {
+			this.createZoneTask = createZoneTask;
+		}
 }
