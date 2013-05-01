@@ -94,7 +94,7 @@ public class BRPlayerListener implements Listener {
 			player.sendMessage(ChatColor.RED + "ゲームエリア外に出た為、5秒後に爆死します。");
 
 			//殺してステータス変更
-			BRUtils.deadCount(player, 5);
+			//BRUtils.deadCount(player, 5);
 			brp.setStatus(BRPlayerStatus.DEAD);
 			player.setPlayerListName(BRConst.LIST_COLOR_DEAD+player.getName());
 			plugin.getPlayerStat().put(player.getName(),brp);

@@ -1,5 +1,9 @@
 package com.tyoku.util;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -159,12 +163,71 @@ public class BRUtils {
     static public ItemStack getBRMap(BattleRoyale plugin,Player player, short id){
 	    ItemStack tmap = new ItemStack( Material.MAP, 1 ,id);
 	    MapView mapview = plugin.getServer().getMap(id);
-	    mapview.addRenderer(new BrMapRender());
+	    mapview.addRenderer(new BrMapRender(plugin));
 		mapview.setCenterX(plugin.getConfig().getInt("classroom.pos.x"));
 		mapview.setCenterZ(plugin.getConfig().getInt("classroom.pos.z"));
 	    mapview.setWorld(player.getWorld());
 	    mapview.setScale( Scale.FAR );
         return tmap;
+    }
+
+    static public List<String> getRundumMRMapBlocks(){
+		String[] numary = new String[]{"1","2","3","4","5","6","7","8","9","1","2","3","4","5"};
+		String[] alphaary = new String[]{"a","b","c","d","e","f","j","h","i","j","k","l","m","n"};
+		String[] pareAry = new String[numary.length*alphaary.length];
+		int b = 0;
+		for (int i=0; i < numary.length; i++) {
+			for (int j=0; j < alphaary.length; j++) {
+				pareAry[b++]=alphaary[j]+numary[i];
+			}
+		}
+
+		Random rgen = new Random();  // Random number generator
+		//--- Shuffle by exchanging each element randomly
+		for (int i=0; i < pareAry.length; i++) {
+		int randomPosition = rgen.nextInt(pareAry.length);
+		String temp = pareAry[i];
+		pareAry[i] = pareAry[randomPosition];
+		pareAry[randomPosition] = temp;
+		}
+
+		List<String> ret = new ArrayList<String>();
+		for (int i=0; i < pareAry.length; i++) {
+			ret.add(pareAry[i]);
+		}
+
+		return ret;
+    }
+
+    /**
+     * BR地図ブロックの場所を数値で返却。
+     * @param brk
+     * @return int[0]は数字の場所
+     * 　　　　int[1]はアルファベットの場所
+     */
+    static public int[] brMapBlok2XYs(String brk){
+    	int[] ret = new int[2];
+		String[] numary = new String[]{"1","2","3","4","5","6","7","8","9","1","2","3","4","5"};
+		String[] alphaary = new String[]{"a","b","c","d","e","f","j","h","i","j","k","l","m","n"};
+		String alpha = brk.substring(0,1);
+		String num = brk.substring(1);
+		int alphapos = 0;
+		int numpos = 0;
+		for (int i=0; i < numary.length; i++) {
+			if(numary[i].equals(alpha)){
+				alphapos = i;
+				break;
+			}
+		}
+		for (int j=0; j < alphaary.length; j++) {
+			if(alphaary[j].equals(num)){
+				numpos = j;
+				break;
+			}
+		}
+    	ret[0]=alphapos;
+    	ret[1]=numpos;
+    	return ret;
     }
 
 }

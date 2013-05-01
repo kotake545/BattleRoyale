@@ -1,7 +1,9 @@
 package com.tyoku;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -17,6 +19,7 @@ import com.tyoku.dto.BRManager;
 import com.tyoku.dto.BRPlayer;
 import com.tyoku.listener.BRPlayerListener;
 import com.tyoku.listener.MapListener;
+import com.tyoku.util.BRUtils;
 
 public class BattleRoyale extends JavaPlugin{
 	private Logger log;
@@ -24,6 +27,8 @@ public class BattleRoyale extends JavaPlugin{
 	private BRManager brManager;
 	private Map<String, BRPlayer> playerStat;
 	private Map<String,BukkitTask> playerTask;
+	private List<String> randomMapBlocks;
+	private List<String> deadAreaBlocks;
 
 	@SuppressWarnings("unused")
 	private DBManager dbm = new DBManager("battleroyale.sqlite3");
@@ -37,6 +42,12 @@ public class BattleRoyale extends JavaPlugin{
 		    this.saveDefaultConfig();
 		}
 		setBrManager(new BRManager());
+
+		this.randomMapBlocks = BRUtils.getRundumMRMapBlocks();
+		deadAreaBlocks = new ArrayList<String>();
+		deadAreaBlocks.add(randomMapBlocks.get(0));
+		deadAreaBlocks.add(randomMapBlocks.get(1));
+		deadAreaBlocks.add(randomMapBlocks.get(2));
 
 		this.playerStat = new HashMap<String, BRPlayer>();
 		this.setPlayerTask(new HashMap<String, BukkitTask>());
@@ -83,5 +94,19 @@ public class BattleRoyale extends JavaPlugin{
 	public void setPlayerTask(Map<String,BukkitTask> playerTask) {
 		this.playerTask = playerTask;
 	}
+	public List<String> getRandomMapBlocks() {
+		return randomMapBlocks;
+	}
 
+	public void setRandomMapBlocks(List<String> randomMapBlocks) {
+		this.randomMapBlocks = randomMapBlocks;
+	}
+
+	public List<String> getDeadAreaBlocks() {
+		return deadAreaBlocks;
+	}
+
+	public void setDeadAreaBlocks(List<String> deadAreaBlocks) {
+		this.deadAreaBlocks = deadAreaBlocks;
+	}
 }
