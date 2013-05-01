@@ -50,7 +50,17 @@ public class BrGame extends BRCmdExe {
 			this.plugin.getBrManager().setGameStatus(BRGameStatus.PLAYING);
 
 			//禁止エリア作成非同期処理
-			this.plugin.setCreateZoneTask(new CreateDeadZone(this.plugin, 5).runTaskTimerAsynchronously(plugin,0, 60*20));
+			int intervalSecond = plugin.getConfig().getInt("deadarea.interval.second");
+			int intervalArea = plugin.getConfig().getInt("deadarea.interval.appenArea");
+			if(intervalSecond == 0){
+				plugin.getConfig().set("deadarea.interval.second", 120);
+				intervalSecond = 120;
+			}
+			if(intervalArea == 0){
+				plugin.getConfig().set("deadarea.interval.appenArea", 10);
+				intervalArea = 10;
+			}
+			this.plugin.setCreateZoneTask(new CreateDeadZone(this.plugin, intervalArea).runTaskTimerAsynchronously(plugin,0, intervalSecond*20));
 
 		}else if("stop".equals(paramArrayOfString[0])){
 			if(paramArrayOfString.length != 1){

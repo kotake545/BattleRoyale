@@ -19,7 +19,8 @@ public class CreateDeadZone extends BukkitRunnable {
 		this.plugin.getServer().broadcastMessage(BRConst.MSG_SYS_COLOR + "10秒後に禁止エリアを設定、さらに次回の禁止エリアを設定します。禁止エリアに居るプレイヤーは爆死します。");
 		for (int i = 10; i > 0; i--) {
 			try {
-				this.plugin.getServer().broadcastMessage(BRConst.MSG_SYS_COLOR + "禁止エリア確定まで"+i+"秒。");
+				if(i <= 5 )
+					this.plugin.getServer().broadcastMessage(BRConst.MSG_SYS_COLOR + "禁止エリア確定まで"+i+"秒。");
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
 				System.out.println(e);

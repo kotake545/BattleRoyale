@@ -173,7 +173,7 @@ public class BRUtils {
     }
 
     static public List<String> getRundumMRMapBlocks(){
-                String[] numary = new String[]{"1","2","3","4","5","6","7","8","9","10","11","12","13","14"};
+        		String[] numary = new String[]{"0","1","2","3","4","5","6","7","8","9","10","11","12","13"};
                 String[] alphaary = new String[]{"a","b","c","d","e","f","g","h","i","j","k","l","m","n"};
                 String[] pareAry = new String[numary.length*alphaary.length];
                 int b = 0;
@@ -211,7 +211,7 @@ public class BRUtils {
                 String[] numary = new String[]{"0","1","2","3","4","5","6","7","8","9","10","11","12","13"};
                 String[] alphaary = new String[]{"a","b","c","d","e","f","g","h","i","j","k","l","m","n"};
                 String alpha = brk.substring(0,1);
-                String num = brk.substring(1,2);
+                String num = brk.substring(1,brk.length());
                 int alphapos = 0;
                 int numpos = 0;
                 for (int i=0; i < numary.length; i++) {

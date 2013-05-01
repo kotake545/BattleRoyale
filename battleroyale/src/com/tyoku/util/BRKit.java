@@ -102,7 +102,7 @@ public class BRKit {
         List<ItemStack> ret = new ArrayList<ItemStack>();
         ret.add(new ItemStack(Material.WATER));
         ItemStack helmet = new ItemStack(Material.LEATHER_HELMET,1);
-        helmet.addEnchantment(Enchantment.OXYGEN, 1);
+        helmet.addEnchantment(Enchantment.OXYGEN, 2);
         ret.add(helmet);
         return ret;
     }
@@ -112,7 +112,7 @@ public class BRKit {
         ret.add(new ItemStack(Material.COAL,10));
         ret.add(new ItemStack(Material.IRON_INGOT,10));
         ItemStack helmet = new ItemStack(Material.LEATHER_HELMET,1);
-        helmet.addEnchantment(Enchantment.PROTECTION_FIRE, 5);
+        helmet.addEnchantment(Enchantment.PROTECTION_FIRE, 2);
         ret.add(helmet);
         return ret;
     }
