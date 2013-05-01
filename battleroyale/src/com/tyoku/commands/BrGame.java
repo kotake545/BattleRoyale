@@ -4,6 +4,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import com.tyoku.BattleRoyale;
 import com.tyoku.dto.BRGameStatus;
@@ -37,9 +38,12 @@ public class BrGame extends BRCmdExe {
 			BRUtils.announce(this.plugin, "さぁ、ゲームの始まりです！");
 			Player[] ps = this.plugin.getServer().getOnlinePlayers();
 
-			//参加者にバトロワMAP配布
+			//参加者にバトロワMAPとアイテム配布
 			for(int i = 0; i < ps.length; i++){
 				ps[i].getInventory().addItem(BRUtils.getBRMap(plugin, ps[i], (short)i));
+				for(ItemStack is : BRUtils.getFirstItemStacks()){
+					ps[i].getInventory().addItem(is);
+				}
 			}
 
 			this.plugin.getBrManager().setGameStatus(BRGameStatus.PLAYING);

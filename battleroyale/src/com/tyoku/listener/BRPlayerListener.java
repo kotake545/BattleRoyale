@@ -50,6 +50,8 @@ public class BRPlayerListener implements Listener {
 	    Location nLoc = new Location(w, x, y, z);
 	    this.log.info(String.format("プレイヤーを(X:%d Y:%d Z:%d)へ転送", x,y,z));
         player.teleport(nLoc);
+        player.setHealth(20);
+        player.setFoodLevel(20);
 
 		//プレイヤーリスト作成
 		BRPlayer brps = new BRPlayer();
