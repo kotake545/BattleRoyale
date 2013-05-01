@@ -208,7 +208,7 @@ public class BRUtils {
      */
     static public int[] brMapBlok2XYs(String brk){
             int[] ret = new int[2];
-                String[] numary = new String[]{"1","2","3","4","5","6","7","8","9","10","11","12","13","14"};
+                String[] numary = new String[]{"0","1","2","3","4","5","6","7","8","9","10","11","12","13"};
                 String[] alphaary = new String[]{"a","b","c","d","e","f","g","h","i","j","k","l","m","n"};
                 String alpha = brk.substring(0,1);
                 String num = brk.substring(1,2);
@@ -238,11 +238,12 @@ public class BRUtils {
      * @param color
      */
     static public void drawBRBapBlocks(MapCanvas mc, List<String> blocks, byte color){
-        int draszie = 8;
+        int draszie = 10;
+        int padding = 10;
         for (String brk : blocks) {
             int[] pos = BRUtils.brMapBlok2XYs(brk);
-            for (int i = pos[0]; i < pos[0] + draszie; i++) {
-                for (int j = pos[1]; i < pos[1] + draszie; i++) {
+            for (int i = pos[1]*padding+1; i < pos[1]*padding + draszie; i++) {
+                for (int j = pos[0]*padding+1; j < pos[0]*padding + draszie; j++) {
                     mc.setPixel(i, j, color);
                 }
             }

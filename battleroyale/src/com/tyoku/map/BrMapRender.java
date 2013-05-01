@@ -1,5 +1,7 @@
 package com.tyoku.map;
 
+import java.awt.Color;
+
 import org.bukkit.entity.Player;
 import org.bukkit.map.MapCanvas;
 import org.bukkit.map.MapPalette;
@@ -35,18 +37,18 @@ public class BrMapRender extends MapRenderer {
                         }
                 }
                 //デッド予告ゾーンを黄緑塗り
-                BRUtils.drawBRBapBlocks(paramMapCanvas, plugin.getNextAreaBlocks(), MapPalette.LIGHT_GREEN);
+                BRUtils.drawBRBapBlocks(paramMapCanvas, plugin.getNextAreaBlocks(), MapPalette.matchColor(Color.YELLOW));
 
                 //デッドゾーンを赤塗り
-                BRUtils.drawBRBapBlocks(paramMapCanvas, plugin.getDeadAreaBlocks(), MapPalette.RED);
+                BRUtils.drawBRBapBlocks(paramMapCanvas, plugin.getDeadAreaBlocks(), MapPalette.WHITE);
 
                 //座標文字列絵画
                 int count = 0;
-                String[] numary = new String[]{"1","2","3","4","5","6","7","8","9","0","1","2","3","4"};
+                String[] numary = new String[]{"0","1","2","3","4","5","6","7","8","9","0","1","2","3"};
                 String[] alphaary = new String[]{"a","b","c","d","e","f","g","h","i","j","k","l","m","n"};
                 for(int i = 0; i < canvassize; i+=padding){
                         paramMapCanvas.drawText(i+4, 0, MinecraftFont.Font, numary[count]);
-                        paramMapCanvas.drawText(0, i+4, MinecraftFont.Font, alphaary[count]);
+                        paramMapCanvas.drawText(0, i+2, MinecraftFont.Font, alphaary[count]);
                         count++;
                 }
 

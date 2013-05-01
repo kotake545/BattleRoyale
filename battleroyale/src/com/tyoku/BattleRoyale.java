@@ -56,6 +56,12 @@ public class BattleRoyale extends JavaPlugin{
                 nextAreaBlocks.add(randomMapBlocks.get(6));
                 nextAreaBlocks.add(randomMapBlocks.get(7));
                 nextAreaBlocks.add(randomMapBlocks.get(8));
+                for(String d : deadAreaBlocks){
+                	this.log.info("DeadArea:"+d);
+                }
+                for(String d : nextAreaBlocks){
+                	this.log.info("AlertArea:"+d);
+                }
 
                 this.playerStat = new HashMap<String, BRPlayer>();
                 this.setPlayerTask(new HashMap<String, BukkitTask>());

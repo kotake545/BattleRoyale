@@ -15,7 +15,7 @@ public class BRKit {
         ret.add(new ItemStack(Material.BLAZE_ROD,20));
         ret.add(new ItemStack(Material.SAND,60));
         ret.add(new ItemStack(Material.NETHER_WARTS,20));
-        ret.add(new ItemStack(Material.CAULDRON,1));
+        ret.add(new ItemStack(Material.CAULDRON_ITEM,1));
         ret.add(new ItemStack(Material.BUCKET,1));
         ret.add(new ItemStack(Material.REDSTONE_BLOCK,1));
         ret.add(new ItemStack(Material.GLOWSTONE,1));
@@ -102,14 +102,8 @@ public class BRKit {
         List<ItemStack> ret = new ArrayList<ItemStack>();
         ret.add(new ItemStack(Material.WATER));
         ItemStack helmet = new ItemStack(Material.LEATHER_HELMET,1);
-        helmet.addEnchantment(Enchantment.OXYGEN, 4);
-        ItemStack walker = new ItemStack(Material.LEATHER_BOOTS,1);
-        walker.addEnchantment(Enchantment.WATER_WORKER, 4);
-        ItemStack dig = new ItemStack(Material.LEATHER_LEGGINGS,1);
-        dig.addEnchantment(Enchantment.DIG_SPEED, 1);
+        helmet.addEnchantment(Enchantment.OXYGEN, 1);
         ret.add(helmet);
-        ret.add(walker);
-        ret.add(dig);
         return ret;
     }
 
