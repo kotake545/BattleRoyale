@@ -47,10 +47,15 @@ public class BRUtils {
      * @return
      */
     static public boolean isGameArea(BattleRoyale plugin, Player player){
-            int x1 = plugin.getConfig().getInt("gamearea.pos1.x");
-            int z1 = plugin.getConfig().getInt("gamearea.pos1.z");
-            int x2 = plugin.getConfig().getInt("gamearea.pos2.x");
-            int z2 = plugin.getConfig().getInt("gamearea.pos2.z");
+    	int g = plugin.getConfig().getInt("gamearea.glid");
+
+        int roomX = plugin.getConfig().getInt("classroom.pos.x");
+        int roomZ = plugin.getConfig().getInt("classroom.pos.z");
+        int rangesize = BRConst.BRMAP_GRID_FOR_BLOCK_SIZE * g + BRConst.BRMAP_GRID_FOR_BLOCK_SIZE / 2;
+        int x1 = roomX - rangesize;
+        int z1 = roomZ - rangesize;
+        int x2 = roomX + rangesize;
+        int z2 = roomZ + rangesize;
             int w = 0;
             if(x1 < x2){
                     w = x1;
@@ -78,10 +83,15 @@ public class BRUtils {
      * @return
      */
     static public boolean isAlertArea(BattleRoyale plugin, Player player){
-            int x1 = plugin.getConfig().getInt("gamearea.pos1.x");
-            int z1 = plugin.getConfig().getInt("gamearea.pos1.z");
-            int x2 = plugin.getConfig().getInt("gamearea.pos2.x");
-            int z2 = plugin.getConfig().getInt("gamearea.pos2.z");
+    	int g = plugin.getConfig().getInt("gamearea.glid");
+
+        int roomX = plugin.getConfig().getInt("classroom.pos.x");
+        int roomZ = plugin.getConfig().getInt("classroom.pos.z");
+        int rangesize = BRConst.BRMAP_GRID_FOR_BLOCK_SIZE * g + BRConst.BRMAP_GRID_FOR_BLOCK_SIZE / 2;
+        int x1 = roomX - rangesize;
+        int z1 = roomZ - rangesize;
+        int x2 = roomX + rangesize;
+        int z2 = roomZ + rangesize;
             int w = 0;
             if(x1 < x2){
                     w = x1;
@@ -116,23 +126,22 @@ public class BRUtils {
      * @return
      */
 	public static boolean isDeadArea(BattleRoyale plugin, Player player) {
-		int blockSize = 80;
         int roomX = plugin.getConfig().getInt("classroom.pos.x");
         int roomZ = plugin.getConfig().getInt("classroom.pos.z");
-        int map0X = roomX - (blockSize * 6 + blockSize / 2);
-        int map0Z = roomZ - (blockSize * 6 + blockSize / 2);
+        int map0X = roomX - (BRConst.BRMAP_GRID_FOR_BLOCK_SIZE * 6 + BRConst.BRMAP_GRID_FOR_BLOCK_SIZE / 2);
+        int map0Z = roomZ - (BRConst.BRMAP_GRID_FOR_BLOCK_SIZE * 6 + BRConst.BRMAP_GRID_FOR_BLOCK_SIZE / 2);
         int playerX = player.getLocation().getBlockX();
         int playerZ = player.getLocation().getBlockZ();
         for(String deadArea : plugin.getDeadAreaBlocks()){
         	int[] da = BRUtils.brMapBlok2XYs(deadArea);
-        	int daX = da[1]*blockSize + map0X;
-        	int daZ = da[0]*blockSize + map0Z;
+        	int daX = da[1]*BRConst.BRMAP_GRID_FOR_BLOCK_SIZE + map0X;
+        	int daZ = da[0]*BRConst.BRMAP_GRID_FOR_BLOCK_SIZE + map0Z;
 //        	player.sendMessage(String.format("MAP[a0]座標は(X:%s, Z:%s)", map0X, map0Z));
 //        	player.sendMessage(String.format("禁止エリア[%s]座標は(X:%s, Z:%s)", deadArea, daX, daZ));
         	if(daX <= playerX
-        			&& playerX <= daX + blockSize
+        			&& playerX <= daX + BRConst.BRMAP_GRID_FOR_BLOCK_SIZE
         			&& daZ <= playerZ
-        			&& playerZ <= daZ + blockSize){
+        			&& playerZ <= daZ + BRConst.BRMAP_GRID_FOR_BLOCK_SIZE){
         		return true;
         	}
         }
@@ -287,7 +296,6 @@ public class BRUtils {
         ret.add(new ItemStack(Material.POTION, 3));
         ret.add(new ItemStack(Material.BREAD, 5));
         ret.add(new ItemStack(Material.COMPASS, 1));
-        ret.add(new ItemStack(Material.TORCH, 5));
         ret.add(new ItemStack(Material.WOOD_SWORD, 1));
 
         //ボーナスアイテム

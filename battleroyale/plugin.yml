@@ -9,5 +9,5 @@ commands:
       description: バトロワの開始と終了を操作。または現在のステータスを参照します。
       usage: /brgame [start|stop|status]
    setbrarea:
-      description: ゲームエリアを1と2の対角の四角形エリアで設定します（高さ無視）。座標を指定すればその座標を設定します。因みに、プレイヤーがエリアから出ると5秒後、爆発して死亡します。
-      usage: /setbrarea [1|2] [[x] [z]]
+      description: ゲームエリアを分校を中心に何マスで行うか設定する。
+      usage: /setbrarea [n]

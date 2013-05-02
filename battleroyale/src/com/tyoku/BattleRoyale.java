@@ -14,7 +14,6 @@ import org.bukkit.scheduler.BukkitTask;
 import com.tyoku.commands.BrGame;
 import com.tyoku.commands.GameArea;
 import com.tyoku.commands.StartPosCmd;
-import com.tyoku.db.DBManager;
 import com.tyoku.dto.BRManager;
 import com.tyoku.dto.BRPlayer;
 import com.tyoku.listener.BRPlayerListener;
@@ -25,6 +24,7 @@ public class BattleRoyale extends JavaPlugin {
 	private Logger log;
 	private File config;
 	private BRManager brManager;
+	private BRConfig brConfig;
 	private Map<String, BRPlayer> playerStat;
 	private Map<String, BukkitTask> playerTask;
 	private List<String> randomMapBlocks;
@@ -32,8 +32,8 @@ public class BattleRoyale extends JavaPlugin {
 	private List<String> nextAreaBlocks;
 	private BukkitTask createZoneTask;
 
-	@SuppressWarnings("unused")
-	private DBManager dbm = new DBManager("battleroyale.sqlite3");
+//	@SuppressWarnings("unused")
+//	private DBManager dbm = new DBManager("battleroyale.sqlite3");
 
 	@Override
 	public void onEnable() {
@@ -43,7 +43,8 @@ public class BattleRoyale extends JavaPlugin {
 		if (!config.exists()) {
 			this.saveDefaultConfig();
 		}
-		setBrManager(new BRManager());
+		this.brManager = new BRManager();
+		this.brConfig = new BRConfig();
 
 		this.randomMapBlocks = BRUtils.getRundumMRMapBlocks();
 		nextAreaBlocks = new ArrayList<String>();
@@ -73,6 +74,13 @@ public class BattleRoyale extends JavaPlugin {
 			this.createZoneTask = null;
 		}
 		this.log.info("BattleRoyale Disabled.");
+	}
+
+	public void setConfig(){
+		this.brConfig = new BRConfig();
+		this.brConfig.setGameGridSize(this.getConfig().getInt("gamearea.glid"));
+		this.brConfig.setClassRoomPosX(this.getConfig().getInt("classroom.pos.x"));
+		this.brConfig.setClassRoomPosZ(this.getConfig().getInt("classroom.pos.z"));
 	}
 
 	public BRManager getBrManager() {
@@ -135,5 +143,13 @@ public class BattleRoyale extends JavaPlugin {
 
 	public void setCreateZoneTask(BukkitTask createZoneTask) {
 		this.createZoneTask = createZoneTask;
+	}
+
+	public BRConfig getBrConfig() {
+		return brConfig;
+	}
+
+	public void setBrConfig(BRConfig brConfig) {
+		this.brConfig = brConfig;
 	}
 }

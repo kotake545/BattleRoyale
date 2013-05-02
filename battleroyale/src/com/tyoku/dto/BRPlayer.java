@@ -5,6 +5,7 @@ public class BRPlayer {
 	private short durability;
 	private BRPlayerStatus status;
 	private int playCount = 0;
+	private boolean isFiestChestOpend = true;
 
 	public String getName() {
 		return name;
@@ -29,5 +30,11 @@ public class BRPlayer {
 	}
 	public void setDurability(short durability) {
 		this.durability = durability;
+	}
+	public boolean isFiestChestOpend() {
+		return isFiestChestOpend;
+	}
+	public void setFiestChestOpend(boolean isFiestChestOpend) {
+		this.isFiestChestOpend = isFiestChestOpend;
 	}
 }

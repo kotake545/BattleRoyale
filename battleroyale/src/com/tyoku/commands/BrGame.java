@@ -1,6 +1,7 @@
 package com.tyoku.commands;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -41,6 +42,8 @@ public class BrGame extends BRCmdExe {
 
 			//参加者にバトロワMAPとアイテム配布
 			for(int i = 0; i < ps.length; i++){
+				ps[i].getInventory().addItem(new ItemStack(Material.CHEST,1));
+				ps[i].getInventory().addItem(new ItemStack(Material.TORCH,5));
 				ps[i].getInventory().addItem(BRUtils.getBRMap(plugin, ps[i], (short)i));
 				for(ItemStack is : BRUtils.getFirstItemStacks()){
 					ps[i].getInventory().addItem(is);
