@@ -202,8 +202,8 @@ public class BRUtils {
      * @return
      */
     static public ItemStack getBRMap(BattleRoyale plugin,Player player, short id){
-            ItemStack tmap = new ItemStack( Material.MAP, 1 ,(short)0);
-            MapView mapview = Bukkit.getServer().getMap((short)0);
+            ItemStack tmap = new ItemStack( Material.MAP, 1 ,(short)id);
+            MapView mapview = Bukkit.getServer().getMap((short)id);
             if (mapview == null) {
             	mapview = Bukkit.createMap(Bukkit.getWorlds().get(0));
             }

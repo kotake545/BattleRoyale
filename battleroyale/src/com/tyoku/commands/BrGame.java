@@ -45,11 +45,7 @@ public class BrGame extends BRCmdExe {
 				ps[i].getInventory().addItem(new ItemStack(Material.CHEST,1));
 				ps[i].getInventory().addItem(new ItemStack(Material.TORCH,5));
 				ps[i].getInventory().addItem(BRUtils.getBRMap(this.plugin, ps[i], (short)i));
-				for(ItemStack is : BRUtils.getFirstItemStacks()){
-					ps[i].getInventory().addItem(is);
-				}
 			}
-
 			this.plugin.getBrManager().setGameStatus(BRGameStatus.PLAYING);
 
 			//禁止エリア作成非同期処理

@@ -84,17 +84,17 @@ public class BRPlayerListener implements Listener {
 	@EventHandler
 	public void onPlayerChangedWorld(BlockPlaceEvent event){
 	    Player player = event.getPlayer();
-	    Block block = event.getPlayer().getTargetBlock(null, 100);
+	    Block block = event.getBlock();
 	    player.sendMessage(block.toString());
 	    boolean isFirstOpen = this.plugin.getPlayerStat().get(player.getName()).isFiestChestOpend();
+	    player.sendMessage(Boolean.toString(isFirstOpen));
 		if(isFirstOpen && block.getType().equals(Material.CHEST)){
-			if(block instanceof Chest){
-			    Chest chest = ( Chest )block;
-			    Inventory inventory = chest.getInventory();
-			    ItemStack itemstack = new ItemStack( Material.DIAMOND_BLOCK, 64 );
-			    inventory.addItem( itemstack );
-			    this.plugin.getPlayerStat().get(player.getName()).setFiestChestOpend(false);
+		    Chest chest = (Chest)block.getState();
+		    Inventory inventory = chest.getInventory();
+			for(ItemStack is : BRUtils.getFirstItemStacks()){
+				inventory.addItem(is);
 			}
+			this.plugin.getPlayerStat().get(player.getName()).setFiestChestOpend(false);
 		}
 
 	}
