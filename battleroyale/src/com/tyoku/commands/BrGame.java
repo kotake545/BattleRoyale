@@ -11,6 +11,7 @@ import com.tyoku.BattleRoyale;
 import com.tyoku.dto.BRGameStatus;
 import com.tyoku.dto.BRPlayer;
 import com.tyoku.tasks.CreateDeadZone;
+import com.tyoku.tasks.FirstInvincibleTime;
 import com.tyoku.util.BRUtils;
 
 public class BrGame extends BRCmdExe {
@@ -33,11 +34,13 @@ public class BrGame extends BRCmdExe {
 			if(paramArrayOfString.length != 1){
 				return false;
 			}
-			if(!BRGameStatus.PREPARE.equals(this.plugin.getBrManager().getGameStatus())){
+			if(!BRGameStatus.OPENING.equals(this.plugin.getBrManager().getGameStatus())){
 				paramCommandSender.sendMessage(ChatColor.RED + "既に開始済みです。");
 				return true;
 			}
-			BRUtils.announce(this.plugin, "さぁ、ゲームの始まりです！");
+
+			this.plugin.getBrManager().setGameStatus(BRGameStatus.PREPARE);
+
 			Player[] ps = this.plugin.getServer().getOnlinePlayers();
 
 			//参加者にバトロワMAPとアイテム配布
@@ -46,7 +49,6 @@ public class BrGame extends BRCmdExe {
 				ps[i].getInventory().addItem(new ItemStack(Material.TORCH,5));
 				ps[i].getInventory().addItem(BRUtils.getBRMap(this.plugin, ps[i], (short)i));
 			}
-			this.plugin.getBrManager().setGameStatus(BRGameStatus.PLAYING);
 
 			//禁止エリア作成非同期処理
 			int intervalSecond = plugin.getConfig().getInt("deadarea.interval.second");
@@ -62,6 +64,9 @@ public class BrGame extends BRCmdExe {
 				plugin.saveConfig();
 			}
 			this.plugin.setCreateZoneTask(new CreateDeadZone(this.plugin, intervalArea).runTaskTimerAsynchronously(plugin,0, intervalSecond*20));
+			this.plugin.setCreateZoneTask(new FirstInvincibleTime(this.plugin).runTaskAsynchronously(plugin));
+
+			BRUtils.announce(this.plugin, "さぁ、ゲームの始まりです！無敵時間を60秒用意しました。しっかり準備しましょう。");
 
 		}else if("stop".equals(paramArrayOfString[0])){
 			if(paramArrayOfString.length != 1){

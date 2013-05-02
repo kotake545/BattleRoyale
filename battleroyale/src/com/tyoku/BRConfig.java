@@ -4,6 +4,7 @@ public class BRConfig {
 
 	private int gameGridSize = 0;
 	private int classRoomPosX = 1000;
+	private int classRoomPosY = 1000;
 	private int classRoomPosZ = 1000;
 
 	public BRConfig() {
@@ -23,6 +24,14 @@ public class BRConfig {
 
 	public void setClassRoomPosX(int classRoomPosX) {
 		this.classRoomPosX = classRoomPosX;
+	}
+
+	public int getClassRoomPosY() {
+		return classRoomPosY;
+	}
+
+	public void setClassRoomPosY(int classRoomPosY) {
+		this.classRoomPosY = classRoomPosY;
 	}
 
 	public int getClassRoomPosZ() {

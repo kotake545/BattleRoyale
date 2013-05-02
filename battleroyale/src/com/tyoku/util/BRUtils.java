@@ -6,6 +6,7 @@ import java.util.Random;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -14,6 +15,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.map.MapCanvas;
 import org.bukkit.map.MapView;
 import org.bukkit.map.MapView.Scale;
+import org.bukkit.potion.PotionEffect;
 
 import com.tyoku.BattleRoyale;
 import com.tyoku.map.BrMapRender;
@@ -188,10 +190,9 @@ public class BRUtils {
      */
     static public Location getRoomLocation(BattleRoyale plugin, World world){
             //プリセット位置へプレイヤーを飛ばす
-            int x = plugin.getConfig().getInt("classroom.pos.x");
-            int y = plugin.getConfig().getInt("classroom.pos.y");
-            int z = plugin.getConfig().getInt("classroom.pos.z");
-            return new Location(world, x, y, z);
+    	int x = plugin.getBrConfig().getClassRoomPosX();
+    	int z =plugin.getBrConfig().getClassRoomPosZ();
+            return new Location(world, x, 64, z);
     }
 
     /**
@@ -343,5 +344,27 @@ public class BRUtils {
         ret.addAll(bonusItems);
 
         return ret;
+    }
+
+    static public void clearPlayerStatus(Player player){
+    	player.setGameMode(GameMode.SURVIVAL);
+    	player.setAllowFlight(false);
+        player.setHealth(20);
+        player.setFoodLevel(20);
+        player.setLevel(0);
+        for(PotionEffect pe : player.getActivePotionEffects()){
+        	player.removePotionEffect(pe.getType());
+        }
+    }
+
+    static public void setPlayerDeadMode(BattleRoyale plugin, Player player){
+    	clearPlayerStatus(player);
+		player.setDisplayName(BRConst.LIST_COLOR_DEAD + player.getName());
+		player.setPlayerListName(player.getDisplayName());
+    	player.setAllowFlight(true);
+    	Player[] players = plugin.getServer().getOnlinePlayers();
+        for(int i = 0; i < players.length; i++){
+            player.hidePlayer(players[i]);
+        }
     }
 }

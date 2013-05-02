@@ -8,12 +8,22 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.entity.EntityTargetEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerPickupItemEvent;
+import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -42,6 +52,7 @@ public class BRPlayerListener implements Listener {
 	    int x = this.plugin.getBrConfig().getClassRoomPosX();
 	    int z = this.plugin.getBrConfig().getClassRoomPosZ();
 	    int y = player.getLocation().getBlockY();
+	    this.plugin.getBrConfig().setClassRoomPosY(y);
 
 	    if(x == 1000){
 		    x = player.getLocation().getBlockX();
@@ -56,21 +67,19 @@ public class BRPlayerListener implements Listener {
 	    Location nLoc = new Location(w, x, y, z);
 	    this.log.info(String.format("プレイヤーを(X:%d Y:%d Z:%d)へ転送", x,y,z));
         player.teleport(nLoc);
-        player.setHealth(20);
-        player.setFoodLevel(20);
+        BRUtils.clearPlayerStatus(player);
 
 		//プレイヤーリスト作成
 		BRPlayer brps = new BRPlayer();
 		brps.setName(player.getName());
 		String appendMsg = "";
-		if(BRGameStatus.OPENING.equals(this.plugin.getBrManager().getGameStatus())
-				|| BRGameStatus.PREPARE.equals(this.plugin.getBrManager().getGameStatus())
-				){
+		if(BRGameStatus.OPENING.equals(this.plugin.getBrManager().getGameStatus())){
 			brps.setStatus(BRPlayerStatus.PLAYING);
-			player.setPlayerListName(BRConst.LIST_COLOR_PLAYER + player.getName());
+			player.setDisplayName(BRConst.LIST_COLOR_PLAYER + player.getName());
+			player.setPlayerListName(player.getDisplayName());
 		}else{
 			brps.setStatus(BRPlayerStatus.DEAD);
-			player.setPlayerListName(BRConst.LIST_COLOR_DEAD + player.getName());
+			BRUtils.setPlayerDeadMode(plugin, player);
 			appendMsg = "ゲームは既に始まっています。次回、ご参加ください。";
 		}
 		this.plugin.getPlayerStat().put(brps.getName(), brps);
@@ -83,6 +92,9 @@ public class BRPlayerListener implements Listener {
 
 	@EventHandler
 	public void onPlayerChangedWorld(BlockPlaceEvent event){
+		if(this.plugin.getBrManager().getGameStatus().equals(BRGameStatus.OPENING)){
+			event.setCancelled(true);
+		}
 	    Player player = event.getPlayer();
 	    Block block = event.getBlock();
 	    player.sendMessage(block.toString());
@@ -101,7 +113,8 @@ public class BRPlayerListener implements Listener {
 
 	@EventHandler
 	public void onPlayerRespawn(PlayerRespawnEvent event) {
-		event.getPlayer().getInventory().clear();
+		Player player = event.getPlayer();
+        BRUtils.clearPlayerStatus(player);
 		BRUtils.teleportRoom(plugin, event.getPlayer());
 	}
 
@@ -137,5 +150,79 @@ public class BRPlayerListener implements Listener {
 	    }else{
 	        //player.sendMessage(ChatColor.GOLD + "ゲームエリア内");
 	    }
+	}
+
+	@EventHandler
+	public void onEntityDamage(EntityDamageEvent event){
+
+		//プレイヤーへのダメージ制限
+		if(!this.plugin.getBrManager().getGameStatus().equals(BRGameStatus.PLAYING)){
+			if(EntityType.PLAYER.equals(event.getEntityType())){
+				event.setCancelled(true);
+			}
+		}
+		if(EntityType.PLAYER.equals(event.getEntityType())){
+			Player player = (Player)event.getEntity();
+			BRPlayer brp = this.plugin.getPlayerStat().get(player.getName());
+			if(brp == null || BRPlayerStatus.DEAD.equals(brp.getStatus())){
+				event.setCancelled(true);
+			}
+		}
+
+		//死者からのダメージ制限
+		if(DamageCause.ENTITY_ATTACK.equals(event.getCause())){
+           if(event instanceof EntityDamageByEntityEvent) {
+                EntityDamageByEntityEvent e = (EntityDamageByEntityEvent)event;
+                if(EntityType.PLAYER.equals(e.getDamager())){
+	    			BRPlayer brp = this.plugin.getPlayerStat().get(e.getDamager());
+	    			if(brp == null || BRPlayerStatus.DEAD.equals(brp.getStatus())){
+	    				event.setCancelled(true);
+	    			}
+                }
+            }
+		}
+	}
+
+	@EventHandler
+	public void onBlockBreak(BlockBreakEvent event){
+		if(this.plugin.getBrManager().getGameStatus().equals(BRGameStatus.OPENING)){
+			event.setCancelled(true);
+		}
+
+		BRPlayer brp = this.plugin.getPlayerStat().get(event.getPlayer().getName());
+		if(brp == null || BRPlayerStatus.DEAD.equals(brp.getStatus())){
+			event.setCancelled(true);
+		}
+	}
+
+	@EventHandler(priority = EventPriority.LOWEST)
+	public void onPlayerDeath(PlayerDeathEvent event){
+		Player player = event.getEntity();
+		player.kickPlayer(event.getDeathMessage());
+	}
+
+	@EventHandler
+	public void noSee(EntityTargetEvent event) {
+		if (event.getTarget() instanceof Player) {
+			Player player = (Player) event.getTarget();
+			BRPlayer brp = this.plugin.getPlayerStat().get(player.getName());
+			if (brp == null || BRPlayerStatus.DEAD.equals(brp.getStatus())) {
+				event.setCancelled(true);
+			}
+		}
+	}
+
+
+	@EventHandler
+	public void onPlayerPortal(PlayerPortalEvent event) {
+		event.setCancelled(true);
+	}
+
+	@EventHandler
+	public void onPlayerItemHeld(PlayerPickupItemEvent event) {
+		BRPlayer brp = this.plugin.getPlayerStat().get(event.getPlayer().getName());
+		if (brp == null || BRPlayerStatus.DEAD.equals(brp.getStatus())) {
+			event.setCancelled(true);
+		}
 	}
 }

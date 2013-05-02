@@ -14,6 +14,7 @@ import org.bukkit.scheduler.BukkitTask;
 import com.tyoku.commands.BrGame;
 import com.tyoku.commands.GameArea;
 import com.tyoku.commands.StartPosCmd;
+import com.tyoku.dto.BRGameStatus;
 import com.tyoku.dto.BRManager;
 import com.tyoku.dto.BRPlayer;
 import com.tyoku.listener.BRPlayerListener;
@@ -31,6 +32,7 @@ public class BattleRoyale extends JavaPlugin {
 	private List<String> deadAreaBlocks;
 	private List<String> nextAreaBlocks;
 	private BukkitTask createZoneTask;
+	private BukkitTask createFirstInvincible;
 
 //	@SuppressWarnings("unused")
 //	private DBManager dbm = new DBManager("battleroyale.sqlite3");
@@ -44,6 +46,7 @@ public class BattleRoyale extends JavaPlugin {
 			this.saveDefaultConfig();
 		}
 		this.brManager = new BRManager();
+		this.brManager.setGameStatus(BRGameStatus.OPENING);
 		this.brConfig = new BRConfig();
 
 		this.randomMapBlocks = BRUtils.getRundumMRMapBlocks();
@@ -151,5 +154,13 @@ public class BattleRoyale extends JavaPlugin {
 
 	public void setBrConfig(BRConfig brConfig) {
 		this.brConfig = brConfig;
+	}
+
+	public BukkitTask getCreateFirstInvincible() {
+		return createFirstInvincible;
+	}
+
+	public void setCreateFirstInvincible(BukkitTask createFirstInvincible) {
+		this.createFirstInvincible = createFirstInvincible;
 	}
 }
