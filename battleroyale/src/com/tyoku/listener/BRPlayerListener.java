@@ -11,7 +11,7 @@ import org.bukkit.block.Chest;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
@@ -41,6 +41,7 @@ public class BRPlayerListener implements Listener {
 	    //プリセット位置へプレイヤーを飛ばす
 	    int x = this.plugin.getBrConfig().getClassRoomPosX();
 	    int z = this.plugin.getBrConfig().getClassRoomPosZ();
+	    int y = player.getLocation().getBlockY();
 
 	    if(x == 1000){
 		    x = player.getLocation().getBlockX();
@@ -52,8 +53,8 @@ public class BRPlayerListener implements Listener {
 		    this.plugin.getBrConfig().setClassRoomPosX(z);
 	    }
 	    World w = player.getWorld();
-	    Location nLoc = new Location(w, x, 5, z);
-	    this.log.info(String.format("プレイヤーを(X:%d Y:%d Z:%d)へ転送", x,5,z));
+	    Location nLoc = new Location(w, x, y, z);
+	    this.log.info(String.format("プレイヤーを(X:%d Y:%d Z:%d)へ転送", x,y,z));
         player.teleport(nLoc);
         player.setHealth(20);
         player.setFoodLevel(20);
@@ -81,9 +82,10 @@ public class BRPlayerListener implements Listener {
 	}
 
 	@EventHandler
-	public void onPlayerChangedWorld(PlayerChangedWorldEvent event){
+	public void onPlayerChangedWorld(BlockPlaceEvent event){
 	    Player player = event.getPlayer();
 	    Block block = event.getPlayer().getTargetBlock(null, 100);
+	    player.sendMessage(block.toString());
 	    boolean isFirstOpen = this.plugin.getPlayerStat().get(player.getName()).isFiestChestOpend();
 		if(isFirstOpen && block.getType().equals(Material.CHEST)){
 			if(block instanceof Chest){

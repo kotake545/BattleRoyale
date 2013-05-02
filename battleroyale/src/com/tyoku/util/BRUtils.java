@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -201,8 +202,11 @@ public class BRUtils {
      * @return
      */
     static public ItemStack getBRMap(BattleRoyale plugin,Player player, short id){
-            ItemStack tmap = new ItemStack( Material.MAP, 1 ,id);
-            MapView mapview = plugin.getServer().getMap(id);
+            ItemStack tmap = new ItemStack( Material.MAP, 1 ,(short)0);
+            MapView mapview = Bukkit.getServer().getMap((short)0);
+            if (mapview == null) {
+            	mapview = Bukkit.createMap(Bukkit.getWorlds().get(0));
+            }
             mapview.addRenderer(new BrMapRender(plugin));
                 mapview.setCenterX(plugin.getConfig().getInt("classroom.pos.x"));
                 mapview.setCenterZ(plugin.getConfig().getInt("classroom.pos.z"));

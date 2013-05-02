@@ -44,7 +44,7 @@ public class BrGame extends BRCmdExe {
 			for(int i = 0; i < ps.length; i++){
 				ps[i].getInventory().addItem(new ItemStack(Material.CHEST,1));
 				ps[i].getInventory().addItem(new ItemStack(Material.TORCH,5));
-				ps[i].getInventory().addItem(BRUtils.getBRMap(plugin, ps[i], (short)i));
+				ps[i].getInventory().addItem(BRUtils.getBRMap(this.plugin, ps[i], (short)i));
 				for(ItemStack is : BRUtils.getFirstItemStacks()){
 					ps[i].getInventory().addItem(is);
 				}
@@ -58,10 +58,12 @@ public class BrGame extends BRCmdExe {
 			if(intervalSecond == 0){
 				plugin.getConfig().set("deadarea.interval.second", 120);
 				intervalSecond = 120;
+				plugin.saveConfig();
 			}
 			if(intervalArea == 0){
 				plugin.getConfig().set("deadarea.interval.appenArea", 10);
 				intervalArea = 10;
+				plugin.saveConfig();
 			}
 			this.plugin.setCreateZoneTask(new CreateDeadZone(this.plugin, intervalArea).runTaskTimerAsynchronously(plugin,0, intervalSecond*20));
 
