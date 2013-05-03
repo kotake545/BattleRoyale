@@ -1,7 +1,6 @@
 package com.tyoku.commands;
 
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -10,9 +9,6 @@ import com.tyoku.BattleRoyale;
 import com.tyoku.dto.BRBuilding;
 
 public class BRBuildCmd extends BRCmdExe {
-	private Location location1;
-	private Location location2;
-	private Location locationBuild;
 
 	public BRBuildCmd(BattleRoyale plugin) {
 		super(plugin);
@@ -23,7 +19,6 @@ public class BRBuildCmd extends BRCmdExe {
 		if(args.length != 1 && args.length != 2 ){
 			return false;
 		}
-
 		try {
 			if ((sender instanceof Player)) {
 				Player player = (Player)sender;
@@ -43,6 +38,7 @@ public class BRBuildCmd extends BRCmdExe {
 						sb.append("登録されていません。");
 					}
 					player.sendMessage(sb.toString());
+					return true;
 				}
 
 				//建築
@@ -55,6 +51,7 @@ public class BRBuildCmd extends BRCmdExe {
 						player.sendMessage(ChatColor.YELLOW + "建築物が存在しないか、建築できる状態ではありません。");
 					}
 					brb.create(player);
+					return true;
 				}
 
 				//保存
@@ -62,24 +59,22 @@ public class BRBuildCmd extends BRCmdExe {
 					if(args.length != 2){
 						return false;
 					}
-					if("".equals(args[1])){
-						return false;
-					}
-					if(this.location1 == null
-							|| this.location2 == null
-							|| this.locationBuild == null){
+
+					if(this.plugin.getLocation1() == null
+							|| this.plugin.getLocation2() == null
+							|| this.plugin.getLocationBuild() == null){
 						player.sendMessage(ChatColor.YELLOW + "ロケーション「１、２、ホーム」全て設定してください。");
 					}
 
-					BRBuilding brb = new BRBuilding(player, args[1], this.location1, this.location2, this.locationBuild);
+					BRBuilding brb = new BRBuilding(player, args[1], this.plugin.getLocation1(), this.plugin.getLocation2(), this.plugin.getLocationBuild());
 					if(!brb.isCreatable()){
 						player.sendMessage(ChatColor.YELLOW + "建築物の認識に失敗したかもー");
-					}
-					if(brb.save()){
+					}else if(brb.save()){
 						player.sendMessage(ChatColor.YELLOW + "建築物を保存しました："+brb.getName()+" ブロック数:"+brb.getBlockNum());
 					}else{
 						player.sendMessage(ChatColor.YELLOW + "建築物の保存に失敗したかもー");
 					}
+					return true;
 				}
 
 				//設定
@@ -87,27 +82,29 @@ public class BRBuildCmd extends BRCmdExe {
 					if(args.length != 2){
 						return false;
 					}
+
 					if("1".equals(args[1])){
-						this.location1 = player.getLocation();
+						this.plugin.setLocation1(player.getLocation());
 						player.sendMessage(String.format(ChatColor.YELLOW + "ロケーション１を座標(X:%d, Y:%d, Z%d)に設定しました。"
-								, this.location1.getBlockX()
-								, this.location1.getBlockY()
-								, this.location1.getBlockZ()));
+								, this.plugin.getLocation1().getBlockX()
+								, this.plugin.getLocation1().getBlockY()
+								, this.plugin.getLocation1().getBlockZ()));
 					}
 					if("2".equals(args[1])){
-						this.location2 = player.getLocation();
+						this.plugin.setLocation2(player.getLocation());
 						player.sendMessage(String.format(ChatColor.YELLOW + "ロケーション2を座標(X:%d, Y:%d, Z%d)に設定しました。"
-								, this.location2.getBlockX()
-								, this.location2.getBlockY()
-								, this.location2.getBlockZ()));
+								, this.plugin.getLocation2().getBlockX()
+								, this.plugin.getLocation2().getBlockY()
+								, this.plugin.getLocation2().getBlockZ()));
 					}
 					if("home".equals(args[1])){
-						this.locationBuild = player.getLocation();
+						this.plugin.setLocationBuild(player.getLocation());
 						player.sendMessage(String.format(ChatColor.YELLOW + "建築ホームを座標(X:%d, Y:%d, Z%d)に設定しました。"
-								, this.locationBuild.getBlockX()
-								, this.locationBuild.getBlockY()
-								, this.locationBuild.getBlockZ()));
+								, this.plugin.getLocationBuild().getBlockX()
+								, this.plugin.getLocationBuild().getBlockY()
+								, this.plugin.getLocationBuild().getBlockZ()));
 					}
+					return true;
 				}
 
 			} else {

@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import org.bukkit.Location;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
@@ -35,6 +36,11 @@ public class BattleRoyale extends JavaPlugin {
 	private BukkitTask createFirstInvincible;
 	private BukkitTask createEnding;
 	private Map<String, BRBuilding> brBuilding;
+
+
+	private Location location1;
+	private Location location2;
+	private Location locationBuild;
 
 //	@SuppressWarnings("unused")
 //	private DBManager dbm = new DBManager("battleroyale.sqlite3");
@@ -181,5 +187,29 @@ public class BattleRoyale extends JavaPlugin {
 
 	public void setBrBuilding(Map<String, BRBuilding> brBuilding) {
 		this.brBuilding = brBuilding;
+	}
+
+	public Location getLocation1() {
+		return location1;
+	}
+
+	public void setLocation1(Location location1) {
+		this.location1 = location1;
+	}
+
+	public Location getLocation2() {
+		return location2;
+	}
+
+	public void setLocation2(Location location2) {
+		this.location2 = location2;
+	}
+
+	public Location getLocationBuild() {
+		return locationBuild;
+	}
+
+	public void setLocationBuild(Location locationBuild) {
+		this.locationBuild = locationBuild;
 	}
 }

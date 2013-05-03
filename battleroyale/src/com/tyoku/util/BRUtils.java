@@ -45,41 +45,41 @@ public class BRUtils {
         }
     }
 
-    /**
-     * プレイヤーがBRゲームエリア内に存在するか否かを判定する。
-     * @param plugin
-     * @param player
-     * @return
-     */
-    static public boolean isGameArea(BattleRoyale plugin, Player player){
-    	int g = plugin.getConfig().getInt("gamearea.glid");
+	/**
+	 * プレイヤーがBRゲームエリア内に存在するか否かを判定する。
+	 * @param plugin
+	 * @param player
+	 * @return
+	 */
+	static public boolean isGameArea(BattleRoyale plugin, Player player) {
+		int g = plugin.getConfig().getInt("gamearea.glid");
 
-        int roomX = plugin.getBrConfig().getClassRoomPosX();
-        int roomZ = plugin.getBrConfig().getClassRoomPosZ();
-        int rangesize = BRConst.BRMAP_GRID_FOR_BLOCK_SIZE * g + BRConst.BRMAP_GRID_FOR_BLOCK_SIZE / 2;
-        int x1 = roomX - rangesize;
-        int z1 = roomZ - rangesize;
-        int x2 = roomX + rangesize;
-        int z2 = roomZ + rangesize;
-            int w = 0;
-            if(x1 < x2){
-                    w = x1;
-                    x1 = x2;
-                    x2 = w;
-            }
-            if(z1 < z2){
-                    w = z1;
-                    z1 = z2;
-                    z2 = w;
-            }
-            int xp = player.getLocation().getBlockX();
-            int zp = player.getLocation().getBlockZ();
-            if(x1 >= xp && xp >= x2 && z1 >= zp && zp >= z2){
-                    return true;
-            }
+		int roomX = plugin.getBrConfig().getClassRoomPosX();
+		int roomZ = plugin.getBrConfig().getClassRoomPosZ();
+		int rangesize = BRConst.BRMAP_GRID_FOR_BLOCK_SIZE * g + BRConst.BRMAP_GRID_FOR_BLOCK_SIZE / 2;
+		int x1 = roomX - rangesize;
+		int z1 = roomZ - rangesize;
+		int x2 = roomX + rangesize;
+		int z2 = roomZ + rangesize;
+		int w = 0;
+		if (x1 < x2) {
+			w = x1;
+			x1 = x2;
+			x2 = w;
+		}
+		if (z1 < z2) {
+			w = z1;
+			z1 = z2;
+			z2 = w;
+		}
+		int xp = player.getLocation().getBlockX();
+		int zp = player.getLocation().getBlockZ();
+		if (x1 >= xp && xp >= x2 && z1 >= zp && zp >= z2) {
+			return true;
+		}
 
-            return false;
-    }
+		return false;
+	}
 
     /**
      * プレイヤーがBRゲームエリア内に存在するか否かを判定する。
