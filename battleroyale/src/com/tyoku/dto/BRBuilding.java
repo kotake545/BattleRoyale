@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
@@ -31,7 +32,7 @@ public class BRBuilding implements Serializable {
 		//座標認識
 		int homeX = standLoc.getBlockX();
 		int homeY = standLoc.getBlockY();
-		int homeZ = standLoc.getBlockY();
+		int homeZ = standLoc.getBlockZ();
 		int x1 = loc1.getBlockX();
 		int y1 = loc1.getBlockY();
 		int z1 = loc1.getBlockZ();
@@ -71,6 +72,7 @@ public class BRBuilding implements Serializable {
 					brblock.setY(y1 + j - homeY - homeY );
 					brblock.setZ(z1 + k - homeZ - homeZ );
 					Block bl = player.getWorld().getBlockAt(i, j, k);
+					brblock.setType(bl.getType());
 					brblock.setBlockData(bl.getData());
 					buildblocks.add(brblock);
 				}
@@ -83,7 +85,26 @@ public class BRBuilding implements Serializable {
 	 * @param world
 	 * @param buildLocation
 	 */
-	public void create(Player player){
+	public boolean create(World world, Location location){
+		//座標差分取得
+		int xd = location.getBlockX()+home.getX();
+		int yd = location.getBlockY()+home.getY();
+		int zd = location.getBlockZ()+home.getZ();
+
+		System.out.println(String.format("HOME：X:%d Y:%d Z:%d", xd, yd, zd));
+		System.out.println(String.format("差分：X:%d Y:%d Z:%d", xd, yd, zd));
+		System.out.println(String.format("ブロック数：%d", this.buildblocks.size()));
+
+		for(BRBuildBlock brb : this.buildblocks){
+			int xb = brb.getX() + xd;
+			int yb = brb.getY() + yd;
+			int zb = brb.getZ() + zd;
+			System.out.println(String.format("操作ブロック：X:%d Y:%d Z:%d", xb, yb, zb));
+			Block wb = world.getBlockAt(xb, yb, zb);
+			wb.setData(brb.getBlockData());
+			wb.setType(brb.getType());
+		}
+		return true;
 	}
 
 	/**

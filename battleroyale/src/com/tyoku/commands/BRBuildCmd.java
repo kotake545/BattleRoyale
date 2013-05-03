@@ -50,8 +50,7 @@ public class BRBuildCmd extends BRCmdExe {
 					if(brb == null || !brb.isCreatable()){
 						player.sendMessage(ChatColor.YELLOW + "建築物が存在しないか、建築できる状態ではありません。");
 					}
-					brb.create(player);
-					return true;
+					return brb.create(player.getWorld(), player.getLocation());
 				}
 
 				//保存

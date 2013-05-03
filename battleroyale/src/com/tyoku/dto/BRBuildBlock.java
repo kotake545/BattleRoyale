@@ -2,12 +2,15 @@ package com.tyoku.dto;
 
 import java.io.Serializable;
 
+import org.bukkit.Material;
+
 public class BRBuildBlock implements Serializable{
 	private static final long serialVersionUID = 199035831519635924L;
 
 	private int x;
 	private int y;
 	private int z;
+	private Material type;
 	private byte blockData;
 
 	public BRBuildBlock() {
@@ -43,5 +46,13 @@ public class BRBuildBlock implements Serializable{
 
 	public void setBlockData(Byte blockData) {
 		this.blockData = blockData;
+	}
+
+	public Material getType() {
+		return type;
+	}
+
+	public void setType(Material type) {
+		this.type = type;
 	}
 }
