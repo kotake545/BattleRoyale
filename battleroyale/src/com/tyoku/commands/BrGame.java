@@ -48,6 +48,7 @@ public class BrGame extends BRCmdExe {
 				ps[i].getInventory().addItem(new ItemStack(Material.CHEST,1));
 				ps[i].getInventory().addItem(new ItemStack(Material.TORCH,5));
 				ps[i].getInventory().addItem(BRUtils.getBRMap(this.plugin, ps[i], (short)i));
+				ps[i].setCompassTarget(ps[i==ps.length-1?0:i+1].getLocation());
 			}
 
 			//禁止エリア作成非同期処理

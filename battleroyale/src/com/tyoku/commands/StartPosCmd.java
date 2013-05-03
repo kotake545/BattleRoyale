@@ -47,10 +47,9 @@ public class StartPosCmd extends BRCmdExe{
 				}
 
 				//設定上書き
-			    this.plugin.getConfig().set("classroom.pos.x",x);
-			    this.plugin.getConfig().set("classroom.pos.y",y);
-			    this.plugin.getConfig().set("classroom.pos.z",z);
-			    this.plugin.saveConfig();
+				this.plugin.getBrConfig().setClassRoomPosX(x);
+				this.plugin.getBrConfig().setClassRoomPosX(y);
+				this.plugin.getBrConfig().setClassRoomPosX(z);
 			    player.sendMessage(String.format(BRConst.MSG_SYS_COLOR + "初期スポーンを(X:%d Y:%d Z:%d)に設定しました。", x,y,z));
 
 			} else {

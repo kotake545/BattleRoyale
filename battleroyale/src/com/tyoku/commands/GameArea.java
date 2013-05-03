@@ -27,6 +27,7 @@ public class GameArea extends BRCmdExe{
 				//設定上書き
 			    this.plugin.getConfig().set("gamearea.glid",num);
 			    this.plugin.saveConfig();
+			    this.plugin.getBrConfig().setGameGridSize(num);
 			    player.sendMessage(String.format("ゲームエリアは分校から%dマスです。", num));
 
 			} else {

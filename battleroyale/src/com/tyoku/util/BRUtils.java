@@ -18,6 +18,8 @@ import org.bukkit.map.MapView.Scale;
 import org.bukkit.potion.PotionEffect;
 
 import com.tyoku.BattleRoyale;
+import com.tyoku.dto.BRPlayer;
+import com.tyoku.dto.BRPlayerStatus;
 import com.tyoku.map.BrMapRender;
 
 public class BRUtils {
@@ -52,8 +54,8 @@ public class BRUtils {
     static public boolean isGameArea(BattleRoyale plugin, Player player){
     	int g = plugin.getConfig().getInt("gamearea.glid");
 
-        int roomX = plugin.getConfig().getInt("classroom.pos.x");
-        int roomZ = plugin.getConfig().getInt("classroom.pos.z");
+        int roomX = plugin.getBrConfig().getClassRoomPosX();
+        int roomZ = plugin.getBrConfig().getClassRoomPosZ();
         int rangesize = BRConst.BRMAP_GRID_FOR_BLOCK_SIZE * g + BRConst.BRMAP_GRID_FOR_BLOCK_SIZE / 2;
         int x1 = roomX - rangesize;
         int z1 = roomZ - rangesize;
@@ -88,8 +90,8 @@ public class BRUtils {
     static public boolean isAlertArea(BattleRoyale plugin, Player player){
     	int g = plugin.getConfig().getInt("gamearea.glid");
 
-        int roomX = plugin.getConfig().getInt("classroom.pos.x");
-        int roomZ = plugin.getConfig().getInt("classroom.pos.z");
+        int roomX = plugin.getBrConfig().getClassRoomPosX();
+        int roomZ = plugin.getBrConfig().getClassRoomPosZ();
         int rangesize = BRConst.BRMAP_GRID_FOR_BLOCK_SIZE * g + BRConst.BRMAP_GRID_FOR_BLOCK_SIZE / 2;
         int x1 = roomX - rangesize;
         int z1 = roomZ - rangesize;
@@ -129,8 +131,8 @@ public class BRUtils {
      * @return
      */
 	public static boolean isDeadArea(BattleRoyale plugin, Player player) {
-        int roomX = plugin.getConfig().getInt("classroom.pos.x");
-        int roomZ = plugin.getConfig().getInt("classroom.pos.z");
+        int roomX = plugin.getBrConfig().getClassRoomPosX();
+        int roomZ = plugin.getBrConfig().getClassRoomPosZ();
         int map0X = roomX - (BRConst.BRMAP_GRID_FOR_BLOCK_SIZE * 6 + BRConst.BRMAP_GRID_FOR_BLOCK_SIZE / 2);
         int map0Z = roomZ - (BRConst.BRMAP_GRID_FOR_BLOCK_SIZE * 6 + BRConst.BRMAP_GRID_FOR_BLOCK_SIZE / 2);
         int playerX = player.getLocation().getBlockX();
@@ -209,8 +211,8 @@ public class BRUtils {
             	mapview = Bukkit.createMap(Bukkit.getWorlds().get(0));
             }
             mapview.addRenderer(new BrMapRender(plugin));
-                mapview.setCenterX(plugin.getConfig().getInt("classroom.pos.x"));
-                mapview.setCenterZ(plugin.getConfig().getInt("classroom.pos.z"));
+            mapview.setCenterX(plugin.getBrConfig().getClassRoomPosX());
+            mapview.setCenterZ(plugin.getBrConfig().getClassRoomPosZ());
             mapview.setWorld(player.getWorld());
             mapview.setScale( Scale.FAR );
         return tmap;
@@ -273,6 +275,17 @@ public class BRUtils {
             ret[0]=alphapos;
             ret[1]=numpos;
             return ret;
+    }
+
+
+    /**
+     * マイクラのロケーションをBRマップ上の座標に変換
+     * @param loc
+     * @return
+     */
+    static public String minloc2BRloc(Location loc){
+    	String ret = "";
+    	return ret;
     }
 
     /**
@@ -364,7 +377,21 @@ public class BRUtils {
     	player.setAllowFlight(true);
     	Player[] players = plugin.getServer().getOnlinePlayers();
         for(int i = 0; i < players.length; i++){
-            player.hidePlayer(players[i]);
+        	players[i].hidePlayer(player);
         }
+    }
+
+    /**
+     * 残存プレイヤー数を返す
+     * @param plugin
+     * @return
+     */
+    static public int getPlayerBalance(BattleRoyale plugin){
+    	int cnt = 0;
+    	for(BRPlayer p : plugin.getPlayerStat().values()){
+    		if(BRPlayerStatus.PLAYING.equals(p.getStatus()))
+    			cnt++;
+    	}
+    	return cnt;
     }
 }

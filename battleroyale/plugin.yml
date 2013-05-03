@@ -11,3 +11,6 @@ commands:
    setbrarea:
       description: ゲームエリアを分校を中心に何マスで行うか設定する。
       usage: /setbrarea [n]
+   brbuild:
+      description: BR特有の建造物を作成します。setでポジション１、２の立方体と建造物の中心を設定します。saveで名前をつけて建造物を保存します。createで指定の建造物を建築します。listで保存している建造物名の一覧を表示します。
+      usage: /brbuild [[list] [create <name>] [save <name>] [set [1|2|home]]]

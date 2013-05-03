@@ -11,14 +11,14 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
+import com.tyoku.commands.BRBuildCmd;
 import com.tyoku.commands.BrGame;
 import com.tyoku.commands.GameArea;
 import com.tyoku.commands.StartPosCmd;
+import com.tyoku.dto.BRBuilding;
 import com.tyoku.dto.BRGameStatus;
 import com.tyoku.dto.BRManager;
 import com.tyoku.dto.BRPlayer;
-import com.tyoku.listener.BRPlayerListener;
-import com.tyoku.listener.MapListener;
 import com.tyoku.util.BRUtils;
 
 public class BattleRoyale extends JavaPlugin {
@@ -33,6 +33,8 @@ public class BattleRoyale extends JavaPlugin {
 	private List<String> nextAreaBlocks;
 	private BukkitTask createZoneTask;
 	private BukkitTask createFirstInvincible;
+	private BukkitTask createEnding;
+	private Map<String, BRBuilding> brBuilding;
 
 //	@SuppressWarnings("unused")
 //	private DBManager dbm = new DBManager("battleroyale.sqlite3");
@@ -53,6 +55,7 @@ public class BattleRoyale extends JavaPlugin {
 		nextAreaBlocks = new ArrayList<String>();
 		deadAreaBlocks = new ArrayList<String>();
 
+		setBrBuilding(new HashMap<String, BRBuilding>());
 		this.playerStat = new HashMap<String, BRPlayer>();
 		this.setPlayerTask(new HashMap<String, BukkitTask>());
 
@@ -61,11 +64,13 @@ public class BattleRoyale extends JavaPlugin {
 		this.getCommand("setroom").setExecutor(new StartPosCmd(this));
 		this.getCommand("brgame").setExecutor(new BrGame(this));
 		this.getCommand("setbrarea").setExecutor(new GameArea(this));
+		this.getCommand("brbuild").setExecutor(new BRBuildCmd(this));
 
 		//リスナー登録
+		@SuppressWarnings("unused")
 		PluginManager pm = this.getServer().getPluginManager();
-		pm.registerEvents(new BRPlayerListener(this), this);
-		pm.registerEvents(new MapListener(this), this);
+		//pm.registerEvents(new BRPlayerListener(this), this);
+		//pm.registerEvents(new MapListener(this), this);
 
 		this.log.info("BattleRoyale Enabled.");
 	}
@@ -82,8 +87,6 @@ public class BattleRoyale extends JavaPlugin {
 	public void setConfig(){
 		this.brConfig = new BRConfig();
 		this.brConfig.setGameGridSize(this.getConfig().getInt("gamearea.glid"));
-		this.brConfig.setClassRoomPosX(this.getConfig().getInt("classroom.pos.x"));
-		this.brConfig.setClassRoomPosZ(this.getConfig().getInt("classroom.pos.z"));
 	}
 
 	public BRManager getBrManager() {
@@ -162,5 +165,21 @@ public class BattleRoyale extends JavaPlugin {
 
 	public void setCreateFirstInvincible(BukkitTask createFirstInvincible) {
 		this.createFirstInvincible = createFirstInvincible;
+	}
+
+	public BukkitTask getCreateEnding() {
+		return createEnding;
+	}
+
+	public void setCreateEnding(BukkitTask createEnding) {
+		this.createEnding = createEnding;
+	}
+
+	public Map<String, BRBuilding> getBrBuilding() {
+		return brBuilding;
+	}
+
+	public void setBrBuilding(Map<String, BRBuilding> brBuilding) {
+		this.brBuilding = brBuilding;
 	}
 }

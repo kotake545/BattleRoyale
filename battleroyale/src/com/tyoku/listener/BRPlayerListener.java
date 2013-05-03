@@ -2,6 +2,7 @@ package com.tyoku.listener;
 
 import java.util.logging.Logger;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -32,6 +33,7 @@ import com.tyoku.BattleRoyale;
 import com.tyoku.dto.BRGameStatus;
 import com.tyoku.dto.BRPlayer;
 import com.tyoku.dto.BRPlayerStatus;
+import com.tyoku.tasks.Ending;
 import com.tyoku.util.BRConst;
 import com.tyoku.util.BRUtils;
 
@@ -51,17 +53,15 @@ public class BRPlayerListener implements Listener {
 	    //プリセット位置へプレイヤーを飛ばす
 	    int x = this.plugin.getBrConfig().getClassRoomPosX();
 	    int z = this.plugin.getBrConfig().getClassRoomPosZ();
-	    int y = player.getLocation().getBlockY();
-	    this.plugin.getBrConfig().setClassRoomPosY(y);
+	    int y = this.plugin.getBrConfig().getClassRoomPosY();
 
-	    if(x == 1000){
+	    if(x == 1000 && y == 1000 && z == 1000){
 		    x = player.getLocation().getBlockX();
 		    z = player.getLocation().getBlockZ();
-		    this.plugin.getConfig().set("classroom.pos.x",x);
-		    this.plugin.getConfig().set("classroom.pos.z",z);
-		    this.plugin.saveConfig();
+		    y = player.getLocation().getBlockY();
 		    this.plugin.getBrConfig().setClassRoomPosX(x);
-		    this.plugin.getBrConfig().setClassRoomPosX(z);
+		    this.plugin.getBrConfig().setClassRoomPosZ(z);
+		    this.plugin.getBrConfig().setClassRoomPosY(y);
 	    }
 	    World w = player.getWorld();
 	    Location nLoc = new Location(w, x, y, z);
@@ -97,7 +97,6 @@ public class BRPlayerListener implements Listener {
 		}
 	    Player player = event.getPlayer();
 	    Block block = event.getBlock();
-	    player.sendMessage(block.toString());
 	    boolean isFirstOpen = this.plugin.getPlayerStat().get(player.getName()).isFiestChestOpend();
 	    player.sendMessage(Boolean.toString(isFirstOpen));
 		if(isFirstOpen && block.getType().equals(Material.CHEST)){
@@ -173,7 +172,7 @@ public class BRPlayerListener implements Listener {
 		if(DamageCause.ENTITY_ATTACK.equals(event.getCause())){
            if(event instanceof EntityDamageByEntityEvent) {
                 EntityDamageByEntityEvent e = (EntityDamageByEntityEvent)event;
-                if(EntityType.PLAYER.equals(e.getDamager())){
+                if(EntityType.PLAYER.equals(e.getDamager().getType())){
 	    			BRPlayer brp = this.plugin.getPlayerStat().get(e.getDamager());
 	    			if(brp == null || BRPlayerStatus.DEAD.equals(brp.getStatus())){
 	    				event.setCancelled(true);
@@ -198,6 +197,25 @@ public class BRPlayerListener implements Listener {
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onPlayerDeath(PlayerDeathEvent event){
 		Player player = event.getEntity();
+		BRUtils.setPlayerDeadMode(plugin, player);
+
+		int x = player.getLocation().getBlockX();
+		int y = player.getLocation().getBlockY();
+		int z = player.getLocation().getBlockZ();
+
+		int pb = BRUtils.getPlayerBalance(plugin);
+		if(pb > 1){
+			String msg = String.format(
+					"%sが（X:%d, Y:%d, Z:%d）で死亡しました。【残り%d人】", player.getName(),x,y,z,pb);
+			Bukkit.broadcastMessage(BRConst.MSG_SYS_COLOR + msg);
+		}else if(pb == 0){
+			Bukkit.broadcastMessage(BRConst.MSG_SYS_COLOR + "ゲーム終了・・・"+ChatColor.RED+"全員死亡"+BRConst.MSG_SYS_COLOR+"の為、優勝者なし。");
+			this.plugin.setCreateEnding(new Ending(plugin).runTask(plugin));
+		}else if(pb == 1){
+			Bukkit.broadcastMessage(BRConst.MSG_SYS_COLOR + String.format(
+					"ゲーム終了・・・優勝者は【"+ChatColor.GOLD+"%s"+BRConst.MSG_SYS_COLOR+"】です！おめでとう！！", player.getName()));
+			this.plugin.setCreateEnding(new Ending(plugin).runTask(plugin));
+		}
 		player.kickPlayer(event.getDeathMessage());
 	}
 

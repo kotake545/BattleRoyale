@@ -40,6 +40,5 @@ public class CreateDeadZone extends BukkitRunnable {
 		}
 
 		this.plugin.getServer().broadcastMessage(BRConst.MSG_SYS_COLOR + "禁止エリアと次回の予告エリアを設定しました。各自配布されたMAPを確認しましょう。");
-
 	}
 }
