@@ -69,7 +69,7 @@ public class BRBuildCmd extends BRCmdExe {
 					BRBuilding brb = new BRBuilding(player, args[1], this.plugin.getLocation1(), this.plugin.getLocation2(), this.plugin.getLocationBuild());
 					if(!brb.isCreatable()){
 						player.sendMessage(ChatColor.YELLOW + "建築物の認識に失敗したかもー");
-					}else if(brb.save()){
+					}else if(brb.save(this.plugin)){
 						player.sendMessage(ChatColor.YELLOW + "建築物を保存しました："+brb.getName()+" ブロック数:"+brb.getBlockNum());
 					}else{
 						player.sendMessage(ChatColor.YELLOW + "建築物の保存に失敗したかもー");
@@ -85,21 +85,21 @@ public class BRBuildCmd extends BRCmdExe {
 
 					if("1".equals(args[1])){
 						this.plugin.setLocation1(player.getLocation());
-						player.sendMessage(String.format(ChatColor.YELLOW + "ロケーション１を座標(X:%d, Y:%d, Z%d)に設定しました。"
+						player.sendMessage(String.format(ChatColor.YELLOW + "ロケーション１を座標(X:%d, Y:%d, Z:%d)に設定しました。"
 								, this.plugin.getLocation1().getBlockX()
 								, this.plugin.getLocation1().getBlockY()
 								, this.plugin.getLocation1().getBlockZ()));
 					}
 					if("2".equals(args[1])){
 						this.plugin.setLocation2(player.getLocation());
-						player.sendMessage(String.format(ChatColor.YELLOW + "ロケーション2を座標(X:%d, Y:%d, Z%d)に設定しました。"
+						player.sendMessage(String.format(ChatColor.YELLOW + "ロケーション2を座標(X:%d, Y:%d, Z:%d)に設定しました。"
 								, this.plugin.getLocation2().getBlockX()
 								, this.plugin.getLocation2().getBlockY()
 								, this.plugin.getLocation2().getBlockZ()));
 					}
 					if("home".equals(args[1])){
 						this.plugin.setLocationBuild(player.getLocation());
-						player.sendMessage(String.format(ChatColor.YELLOW + "建築ホームを座標(X:%d, Y:%d, Z%d)に設定しました。"
+						player.sendMessage(String.format(ChatColor.YELLOW + "建築ホームを座標(X:%d, Y:%d, Z:%d)に設定しました。"
 								, this.plugin.getLocationBuild().getBlockX()
 								, this.plugin.getLocationBuild().getBlockY()
 								, this.plugin.getLocationBuild().getBlockZ()));

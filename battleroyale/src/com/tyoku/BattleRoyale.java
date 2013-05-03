@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.bukkit.Location;
 import org.bukkit.plugin.PluginManager;
@@ -65,6 +67,9 @@ public class BattleRoyale extends JavaPlugin {
 		this.playerStat = new HashMap<String, BRPlayer>();
 		this.setPlayerTask(new HashMap<String, BukkitTask>());
 
+		//BR建造物データ読み込み
+		loadBRBuildings();
+
 		//コマンド登録
 		this.log.info("BattleRoyale commands preparing....");
 		this.getCommand("setroom").setExecutor(new StartPosCmd(this));
@@ -93,6 +98,27 @@ public class BattleRoyale extends JavaPlugin {
 	public void setConfig(){
 		this.brConfig = new BRConfig();
 		this.brConfig.setGameGridSize(this.getConfig().getInt("gamearea.glid"));
+	}
+
+	public void loadBRBuildings(){
+		this.brBuilding = new HashMap<String, BRBuilding>();
+		Pattern pattern = Pattern.compile("brbuild_([^.]*)\\.dat");
+		File theDir = new File(this.getDataFolder().getPath());
+		if(theDir.exists()){
+			File[] files = theDir.listFiles();
+			for(int i = 0; i < files.length; i++){
+				if(files[i].isFile()){
+				    Matcher matcher = pattern.matcher(files[i].getName());
+				    if (matcher.find()) {
+					      BRBuilding brb = BRBuilding.getBuilding(files[i]);
+					      if(brb != null){
+					    	  this.brBuilding.put(brb.getName(), brb);
+					      }
+				    }
+				}
+			}
+		}
+		this.log.info("LoadBrBuildings:"+this.brBuilding.size());
 	}
 
 	public BRManager getBrManager() {

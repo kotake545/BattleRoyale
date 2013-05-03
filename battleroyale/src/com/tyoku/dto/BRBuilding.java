@@ -14,6 +14,8 @@ import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
+import com.tyoku.BattleRoyale;
+
 public class BRBuilding implements Serializable {
 	private static final long serialVersionUID = 199035831519635924L;
 
@@ -37,10 +39,6 @@ public class BRBuilding implements Serializable {
 		int y2 = loc2.getBlockY();
 		int z2 = loc2.getBlockZ();
 
-		System.out.println(String.format("H座標 X:%d Y:%d Z:%d", homeX, homeY, homeZ));
-		System.out.println(String.format("1座標 X:%d Y:%d Z:%d", x1, y1, z1));
-		System.out.println(String.format("2座標 X:%d Y:%d Z:%d", x2, y2, z2));
-
 		int w = 0;
 		if (x1 < x2) {
 			w = x1;
@@ -63,23 +61,16 @@ public class BRBuilding implements Serializable {
 		home.setX(homeX - x1);
 		home.setY(homeY - y1);
 		home.setZ(homeZ - z1);
-
-		System.out.println(String.format("1座標 X:%d Y:%d Z:%d", x1, y1, z1));
-		System.out.println(String.format("2座標 X:%d Y:%d Z:%d", x2, y2, z2));
 		//ブロック取得
 		buildblocks = new ArrayList<BRBuildBlock>();
 		for(int i = x2; i <= x1; i++){
 			for(int j = y2; j <= y1; j++){
 				for(int k = z2; k <= z1; k++){
-
-					System.out.println("--X"+i +" Y"+ j + " Z" + k);
 					BRBuildBlock brblock = new BRBuildBlock();
 					brblock.setX(x1 + i - homeX - homeX );
 					brblock.setY(y1 + j - homeY - homeY );
 					brblock.setZ(z1 + k - homeZ - homeZ );
 					Block bl = player.getWorld().getBlockAt(i, j, k);
-
-					System.out.println("bl.getType()->"+bl.getType());
 					brblock.setBlockData(bl.getData());
 					buildblocks.add(brblock);
 				}
@@ -98,28 +89,18 @@ public class BRBuilding implements Serializable {
 	/**
 	 * このクラスオブジェクトシリアライズしてファイルとして保存する。
 	 */
-	public boolean save() {
-
-		System.out.println("----save4-1");
+	public boolean save(BattleRoyale plugin) {
 		try {
-			FileOutputStream outFile = new FileOutputStream(this.name + ".dat");
-
-			System.out.println("----save4-2");
+			FileOutputStream outFile = new FileOutputStream(plugin.getDataFolder().getPath() + "/brbuild_"+ this.name + ".dat");
 			ObjectOutputStream outObject = new ObjectOutputStream(outFile);
-
-			System.out.println("----save4-3");
+			plugin.getBrBuilding().put(this.name, this);
 			outObject.writeObject(this);
-			System.out.println("----save4-4");
 			outObject.close();
 			outFile.close();
-			System.out.println("----save4-5");
 		} catch (IOException e) {
-
-			System.out.println("----save4-6");
 			e.printStackTrace();
 			return false;
 		}
-		System.out.println("----save4-7");
 		return true;
 	}
 
@@ -142,8 +123,7 @@ public class BRBuilding implements Serializable {
 		return home;
 	}
 
-	static public BRBuilding getBuilding(String name) {
-		File file = new File(name + ".dat");
+	static public BRBuilding getBuilding(File file) {
 		if (file.exists()) {
 			FileInputStream inFile = null;
 			ObjectInputStream inObject = null;
