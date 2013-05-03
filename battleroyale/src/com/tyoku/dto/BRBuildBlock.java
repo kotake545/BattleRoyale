@@ -1,6 +1,7 @@
 package com.tyoku.dto;
 
 import java.io.Serializable;
+import java.util.List;
 
 import org.bukkit.Material;
 
@@ -12,6 +13,9 @@ public class BRBuildBlock implements Serializable{
 	private int z;
 	private Material type;
 	private byte blockData;
+	private boolean isEmpty;
+	private byte[] byteOfMaterial;
+	private List<Material> materialTypes;
 
 	public BRBuildBlock() {
 	}
@@ -54,5 +58,29 @@ public class BRBuildBlock implements Serializable{
 
 	public void setType(Material type) {
 		this.type = type;
+	}
+
+	public boolean isEmpty() {
+		return isEmpty;
+	}
+
+	public void setEmpty(boolean isEmpty) {
+		this.isEmpty = isEmpty;
+	}
+
+	public byte[] getByteOfMaterial() {
+		return byteOfMaterial;
+	}
+
+	public void setByteOfMaterial(byte[] byteOfMaterial) {
+		this.byteOfMaterial = byteOfMaterial;
+	}
+
+	public List<Material> getMaterialTypes() {
+		return materialTypes;
+	}
+
+	public void setMaterialTypes(List<Material> materialTypes) {
+		this.materialTypes = materialTypes;
 	}
 }
