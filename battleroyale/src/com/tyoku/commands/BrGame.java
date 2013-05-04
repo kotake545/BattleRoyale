@@ -65,7 +65,7 @@ public class BrGame extends BRCmdExe {
 				plugin.saveConfig();
 			}
 			this.plugin.setCreateZoneTask(new CreateDeadZone(this.plugin, intervalArea).runTaskTimerAsynchronously(plugin,0, intervalSecond*20));
-			this.plugin.setCreateZoneTask(new FirstInvincibleTime(this.plugin).runTaskAsynchronously(plugin));
+			this.plugin.setCreateZoneTask(new FirstInvincibleTime(this.plugin, 120).runTaskAsynchronously(plugin));
 
 			BRUtils.announce(this.plugin, "さぁ、ゲームの始まりです！無敵時間を60秒用意しました。しっかり準備しましょう。");
 
