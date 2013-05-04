@@ -22,6 +22,8 @@ import com.tyoku.dto.BRBuilding;
 import com.tyoku.dto.BRGameStatus;
 import com.tyoku.dto.BRManager;
 import com.tyoku.dto.BRPlayer;
+import com.tyoku.listener.BRPlayerListener;
+import com.tyoku.listener.MapListener;
 import com.tyoku.util.BRUtils;
 
 public class BattleRoyale extends JavaPlugin {
@@ -38,6 +40,7 @@ public class BattleRoyale extends JavaPlugin {
 	private BukkitTask createFirstInvincible;
 	private BukkitTask createEnding;
 	private Map<String, BRBuilding> brBuilding;
+	private boolean isRoomCreated = false;
 
 
 	private Location location1;
@@ -78,10 +81,9 @@ public class BattleRoyale extends JavaPlugin {
 		this.getCommand("brbuild").setExecutor(new BRBuildCmd(this));
 
 		//リスナー登録
-		@SuppressWarnings("unused")
 		PluginManager pm = this.getServer().getPluginManager();
-		//pm.registerEvents(new BRPlayerListener(this), this);
-		//pm.registerEvents(new MapListener(this), this);
+		pm.registerEvents(new BRPlayerListener(this), this);
+		pm.registerEvents(new MapListener(this), this);
 
 		this.log.info("BattleRoyale Enabled.");
 	}
@@ -237,5 +239,13 @@ public class BattleRoyale extends JavaPlugin {
 
 	public void setLocationBuild(Location locationBuild) {
 		this.locationBuild = locationBuild;
+	}
+
+	public boolean isRoomCreated() {
+		return isRoomCreated;
+	}
+
+	public void setRoomCreated(boolean isRoomCreated) {
+		this.isRoomCreated = isRoomCreated;
 	}
 }

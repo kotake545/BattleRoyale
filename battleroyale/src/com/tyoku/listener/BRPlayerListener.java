@@ -30,6 +30,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import com.tyoku.BattleRoyale;
+import com.tyoku.dto.BRBuilding;
 import com.tyoku.dto.BRGameStatus;
 import com.tyoku.dto.BRPlayer;
 import com.tyoku.dto.BRPlayerStatus;
@@ -57,11 +58,23 @@ public class BRPlayerListener implements Listener {
 
 	    if(x == 1000 && y == 1000 && z == 1000){
 		    x = player.getLocation().getBlockX();
-		    z = player.getLocation().getBlockZ();
-		    y = player.getLocation().getBlockY();
+		    z = player.getLocation().getBlockZ()+13;
+		    y = player.getLocation().getBlockY()+6;
 		    this.plugin.getBrConfig().setClassRoomPosX(x);
 		    this.plugin.getBrConfig().setClassRoomPosZ(z);
 		    this.plugin.getBrConfig().setClassRoomPosY(y);
+	    }
+	    if(!this.plugin.isRoomCreated()){
+	    	BRBuilding brb = this.plugin.getBrBuilding().get("home");
+	    	if(brb != null && brb.isCreatable()){
+	    		brb.create(player.getWorld(), new Location(
+	    				player.getWorld()
+	    				, player.getLocation().getBlockX()
+	    				, player.getLocation().getBlockY()
+	    				, player.getLocation().getBlockZ()));
+	    		player.getWorld().setSpawnLocation(x, y, z);
+	    	}
+	    	this.plugin.setRoomCreated(true);
 	    }
 	    World w = player.getWorld();
 	    Location nLoc = new Location(w, x, y, z);
@@ -98,7 +111,6 @@ public class BRPlayerListener implements Listener {
 	    Player player = event.getPlayer();
 	    Block block = event.getBlock();
 	    boolean isFirstOpen = this.plugin.getPlayerStat().get(player.getName()).isFiestChestOpend();
-	    player.sendMessage(Boolean.toString(isFirstOpen));
 		if(isFirstOpen && block.getType().equals(Material.CHEST)){
 		    Chest chest = (Chest)block.getState();
 		    Inventory inventory = chest.getInventory();
