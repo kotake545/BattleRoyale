@@ -30,7 +30,7 @@ public class BrGame extends BRCmdExe {
 
 		Player p = (Player)paramCommandSender;
 
-		if(!p.isOp()){
+		if(!"start".equals(paramArrayOfString[0]) && !p.isOp()){
 			p.sendMessage(ChatColor.RED + "権限不足");
 			return true;
 		}
@@ -71,8 +71,6 @@ public class BrGame extends BRCmdExe {
 			}
 			this.plugin.setCreateZoneTask(new CreateDeadZone(this.plugin, intervalArea).runTaskTimerAsynchronously(plugin,0, intervalSecond*20));
 			this.plugin.setCreateZoneTask(new FirstInvincibleTime(this.plugin, 120).runTaskAsynchronously(plugin));
-
-			BRUtils.announce(this.plugin, "さぁ、ゲームの始まりです！無敵時間を60秒用意しました。しっかり準備しましょう。");
 
 		}else if("stop".equals(paramArrayOfString[0])){
 			if(paramArrayOfString.length != 1){

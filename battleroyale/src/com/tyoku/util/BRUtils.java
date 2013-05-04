@@ -372,6 +372,7 @@ public class BRUtils {
 
     static public void setPlayerDeadMode(BattleRoyale plugin, Player player){
     	clearPlayerStatus(player);
+    	plugin.getPlayerStat().remove(player.getName());
 		player.setDisplayName(BRConst.LIST_COLOR_DEAD + player.getName());
 		player.setPlayerListName(player.getDisplayName());
     	player.setAllowFlight(true);

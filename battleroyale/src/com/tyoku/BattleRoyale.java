@@ -12,7 +12,9 @@ import java.util.regex.Pattern;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
@@ -80,7 +82,13 @@ public class BattleRoyale extends JavaPlugin {
 		loadBRBuildings();
 
 		//ランダム建築
-		createRundomBuild(20);
+		int buildNum = this.getConfig().getInt("brbuild.num");
+		if(buildNum == 0){
+			this.getConfig().set("brbuild.num", 15);
+			buildNum = 15;
+			this.saveConfig();
+		}
+		createRundomBuild(buildNum);
 
 		//コマンド登録
 		this.log.info("BattleRoyale commands preparing....");
@@ -153,6 +161,14 @@ public class BattleRoyale extends JavaPlugin {
 					if("home".equals(brb.getName())){
 						buildNum++;
 						break;
+					}
+					while(true){
+						Block block = w.getBlockAt(new Location(w, x, y, z));
+						if(Material.AIR.equals(block.getType())){
+							y--;
+						}else{
+							break;
+						}
 					}
 					brb.create(w, new Location(w, x, y, z));
 					System.out.println(String.format("%sを座標（X:%d Y:%d Z:%d）", brb.getName(), x, y, z));

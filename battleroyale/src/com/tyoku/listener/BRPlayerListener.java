@@ -12,7 +12,6 @@ import org.bukkit.block.Chest;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
@@ -25,6 +24,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -82,16 +82,17 @@ public class BRPlayerListener implements Listener {
         player.teleport(nLoc);
         BRUtils.clearPlayerStatus(player);
 
-		//プレイヤーリスト作成
+		String appendMsg = "";
 		BRPlayer brps = new BRPlayer();
 		brps.setName(player.getName());
-		String appendMsg = "";
 		if(BRGameStatus.OPENING.equals(this.plugin.getBrManager().getGameStatus())){
-			brps.setStatus(BRPlayerStatus.PLAYING);
 			player.setDisplayName(BRConst.LIST_COLOR_PLAYER + player.getName());
 			player.setPlayerListName(player.getDisplayName());
+			//プレイヤーリスト作成
+			brps.setStatus(BRPlayerStatus.PLAYING);
 		}else{
 			brps.setStatus(BRPlayerStatus.DEAD);
+			player.setPlayerListName(BRConst.LIST_COLOR_DEAD+player.getName());
 			BRUtils.setPlayerDeadMode(plugin, player);
 			appendMsg = "ゲームは既に始まっています。次回、ご参加ください。";
 		}
@@ -110,8 +111,11 @@ public class BRPlayerListener implements Listener {
 		}
 	    Player player = event.getPlayer();
 	    Block block = event.getBlock();
-	    boolean isFirstOpen = this.plugin.getPlayerStat().get(player.getName()).isFiestChestOpend();
-		if(isFirstOpen && block.getType().equals(Material.CHEST)){
+	    BRPlayer brp = this.plugin.getPlayerStat().get(player.getName());
+		if(brp != null
+				&& brp.getStatus().equals(BRPlayerStatus.PLAYING)
+				&& brp.isFiestChestOpend()
+				&& block.getType().equals(Material.CHEST)){
 		    Chest chest = (Chest)block.getState();
 		    Inventory inventory = chest.getInventory();
 			for(ItemStack is : BRUtils.getFirstItemStacks()){
@@ -164,33 +168,28 @@ public class BRPlayerListener implements Listener {
 	}
 
 	@EventHandler
-	public void onEntityDamage(EntityDamageEvent event){
+	public void onEntityDamage(EntityDamageEvent event) {
 
 		//プレイヤーへのダメージ制限
-		if(!this.plugin.getBrManager().getGameStatus().equals(BRGameStatus.PLAYING)){
-			if(EntityType.PLAYER.equals(event.getEntityType())){
-				event.setCancelled(true);
-			}
-		}
-		if(EntityType.PLAYER.equals(event.getEntityType())){
-			Player player = (Player)event.getEntity();
-			BRPlayer brp = this.plugin.getPlayerStat().get(player.getName());
-			if(brp == null || BRPlayerStatus.DEAD.equals(brp.getStatus())){
+		if (!this.plugin.getBrManager().getGameStatus().equals(BRGameStatus.PLAYING)) {
+			if (EntityType.PLAYER.equals(event.getEntityType())) {
 				event.setCancelled(true);
 			}
 		}
 
 		//死者からのダメージ制限
-		if(DamageCause.ENTITY_ATTACK.equals(event.getCause())){
-           if(event instanceof EntityDamageByEntityEvent) {
-                EntityDamageByEntityEvent e = (EntityDamageByEntityEvent)event;
-                if(EntityType.PLAYER.equals(e.getDamager().getType())){
-	    			BRPlayer brp = this.plugin.getPlayerStat().get(e.getDamager());
-	    			if(brp == null || BRPlayerStatus.DEAD.equals(brp.getStatus())){
-	    				event.setCancelled(true);
-	    			}
-                }
-            }
+		if (DamageCause.ENTITY_ATTACK.equals(event.getCause())) {
+			if (event instanceof EntityDamageByEntityEvent) {
+				EntityDamageByEntityEvent e = (EntityDamageByEntityEvent) event;
+				if (e.getDamager() instanceof Player) {
+					Player player = (Player) e.getDamager();
+					Bukkit.broadcastMessage("攻撃者："+player.getName());
+					BRPlayer brp = this.plugin.getPlayerStat().get(player.getName());
+					if (brp == null || BRPlayerStatus.DEAD.equals(brp.getStatus())) {
+						event.setCancelled(true);
+					}
+				}
+			}
 		}
 	}
 
@@ -206,7 +205,7 @@ public class BRPlayerListener implements Listener {
 		}
 	}
 
-	@EventHandler(priority = EventPriority.LOWEST)
+	@EventHandler
 	public void onPlayerDeath(PlayerDeathEvent event){
 		Player player = event.getEntity();
 		BRUtils.setPlayerDeadMode(plugin, player);
@@ -216,6 +215,7 @@ public class BRPlayerListener implements Listener {
 		int z = player.getLocation().getBlockZ();
 
 		int pb = BRUtils.getPlayerBalance(plugin);
+		System.out.println("Balance Player : " + pb);
 		if(pb > 1){
 			String msg = String.format(
 					"%sが（X:%d, Y:%d, Z:%d）で死亡しました。【残り%d人】", player.getName(),x,y,z,pb);
@@ -253,6 +253,14 @@ public class BRPlayerListener implements Listener {
 		BRPlayer brp = this.plugin.getPlayerStat().get(event.getPlayer().getName());
 		if (brp == null || BRPlayerStatus.DEAD.equals(brp.getStatus())) {
 			event.setCancelled(true);
+		}
+	}
+
+	@EventHandler
+	public void onPlayerQuit(PlayerQuitEvent event){
+		int p = BRUtils.getPlayerBalance(plugin);
+		if(p < 1){
+			this.plugin.getServer().shutdown();
 		}
 	}
 }
