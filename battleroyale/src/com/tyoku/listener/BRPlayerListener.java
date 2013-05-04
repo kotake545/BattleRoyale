@@ -224,8 +224,14 @@ public class BRPlayerListener implements Listener {
 			Bukkit.broadcastMessage(BRConst.MSG_SYS_COLOR + "ゲーム終了・・・"+ChatColor.RED+"全員死亡"+BRConst.MSG_SYS_COLOR+"の為、優勝者なし。");
 			this.plugin.setCreateEnding(new Ending(plugin).runTask(plugin));
 		}else if(pb == 1){
+			String winner = "不明";
+			for(BRPlayer brp : this.plugin.getPlayerStat().values()){
+				if(BRPlayerStatus.PLAYING.equals(brp.getStatus())){
+					winner = brp.getName();
+				}
+			}
 			Bukkit.broadcastMessage(BRConst.MSG_SYS_COLOR + String.format(
-					"ゲーム終了・・・優勝者は【"+ChatColor.GOLD+"%s"+BRConst.MSG_SYS_COLOR+"】です！おめでとう！！", player.getName()));
+					"ゲーム終了・・・優勝者は【"+ChatColor.GOLD+"%s"+BRConst.MSG_SYS_COLOR+"】です！おめでとう！！", winner));
 			this.plugin.setCreateEnding(new Ending(plugin).runTask(plugin));
 		}
 		player.kickPlayer(event.getDeathMessage());
