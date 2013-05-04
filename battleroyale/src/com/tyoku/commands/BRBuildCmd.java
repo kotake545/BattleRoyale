@@ -23,6 +23,11 @@ public class BRBuildCmd extends BRCmdExe {
 			if ((sender instanceof Player)) {
 				Player player = (Player)sender;
 
+				if(!player.isOp()){
+					player.sendMessage(ChatColor.RED + "権限不足");
+					return true;
+				}
+
 				//一覧
 				if("list".equals(args[0])){
 					if(args.length != 1){

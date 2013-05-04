@@ -20,6 +20,11 @@ public class StartPosCmd extends BRCmdExe{
 	public boolean onCommand(CommandSender sender, Command cmd, String arg2, String[] arg3) {
 		try {
 			if ((sender instanceof Player)) {
+				if(!sender.isOp()){
+					sender.sendMessage(ChatColor.RED + "権限不足");
+					return true;
+				}
+
 				if(arg3.length != 3 && arg3.length != 0){
 					return false;
 				}

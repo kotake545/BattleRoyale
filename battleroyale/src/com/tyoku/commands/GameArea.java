@@ -17,6 +17,11 @@ public class GameArea extends BRCmdExe{
 	public boolean onCommand(CommandSender sender, Command command, String paramString, String[] args) {
 		try {
 			if ((sender instanceof Player)) {
+				if(!sender.isOp()){
+					sender.sendMessage(ChatColor.RED + "権限不足");
+					return true;
+				}
+
 				if(args.length != 1){
 					return false;
 				}

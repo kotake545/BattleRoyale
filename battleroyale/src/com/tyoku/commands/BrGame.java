@@ -30,6 +30,11 @@ public class BrGame extends BRCmdExe {
 
 		Player p = (Player)paramCommandSender;
 
+		if(!p.isOp()){
+			p.sendMessage(ChatColor.RED + "権限不足");
+			return true;
+		}
+
 		if("start".equals(paramArrayOfString[0])){
 			if(paramArrayOfString.length != 1){
 				return false;

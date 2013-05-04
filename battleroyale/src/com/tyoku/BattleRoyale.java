@@ -5,16 +5,20 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
 import com.tyoku.commands.BRBuildCmd;
+import com.tyoku.commands.BRBuildList;
 import com.tyoku.commands.BrGame;
 import com.tyoku.commands.GameArea;
 import com.tyoku.commands.StartPosCmd;
@@ -41,6 +45,7 @@ public class BattleRoyale extends JavaPlugin {
 	private BukkitTask createEnding;
 	private Map<String, BRBuilding> brBuilding;
 	private boolean isRoomCreated = false;
+	private List<String> createdBrBuilds;
 
 
 	private Location location1;
@@ -65,6 +70,7 @@ public class BattleRoyale extends JavaPlugin {
 		this.randomMapBlocks = BRUtils.getRundumMRMapBlocks();
 		nextAreaBlocks = new ArrayList<String>();
 		deadAreaBlocks = new ArrayList<String>();
+		this.createdBrBuilds = new ArrayList<String>();
 
 		setBrBuilding(new HashMap<String, BRBuilding>());
 		this.playerStat = new HashMap<String, BRPlayer>();
@@ -73,12 +79,16 @@ public class BattleRoyale extends JavaPlugin {
 		//BR建造物データ読み込み
 		loadBRBuildings();
 
+		//ランダム建築
+		createRundomBuild(20);
+
 		//コマンド登録
 		this.log.info("BattleRoyale commands preparing....");
 		this.getCommand("setroom").setExecutor(new StartPosCmd(this));
 		this.getCommand("brgame").setExecutor(new BrGame(this));
 		this.getCommand("setbrarea").setExecutor(new GameArea(this));
 		this.getCommand("brbuild").setExecutor(new BRBuildCmd(this));
+		this.getCommand("brblist").setExecutor(new BRBuildList(this));
 
 		//リスナー登録
 		PluginManager pm = this.getServer().getPluginManager();
@@ -122,6 +132,38 @@ public class BattleRoyale extends JavaPlugin {
 		}
 		this.log.info("LoadBrBuildings:"+this.brBuilding.size());
 	}
+
+	public void createRundomBuild(int buildNum){
+		if(this.brBuilding.isEmpty()){
+				return;
+		}
+
+		World w = this.getServer().getWorlds().get(0);
+		int hugo = 1;
+		for(int i = buildNum; i > 0; i-- ){
+			Random rnd = new Random();
+			int x = (w.getSpawnLocation().getBlockX() + rnd.nextInt(300)+80)*(rnd.nextInt(2)==0?-1:1);
+			int y = 64;
+			int z = (w.getSpawnLocation().getBlockZ() + rnd.nextInt(300)+80)*(rnd.nextInt(2)==0?-1:1);
+
+			int bItem = (int)Math.floor(Math.random() * (this.brBuilding.size()-1)) ;
+			int j = 0;
+			for(BRBuilding brb : this.brBuilding.values()){
+				if(j++ == bItem){
+					if("home".equals(brb.getName())){
+						buildNum++;
+						break;
+					}
+					brb.create(w, new Location(w, x, y, z));
+					System.out.println(String.format("%sを座標（X:%d Y:%d Z:%d）", brb.getName(), x, y, z));
+					this.createdBrBuilds.add(ChatColor.AQUA+brb.getName()+" - "+ChatColor.GOLD+"座標(X:"+Integer.toString(x)+" Y:"+Integer.toString(y)+" Z:"+Integer.toString(z)+")");
+					break;
+				}
+			}
+			hugo = hugo*-1;
+		}
+	}
+
 
 	public BRManager getBrManager() {
 		return brManager;
@@ -247,5 +289,13 @@ public class BattleRoyale extends JavaPlugin {
 
 	public void setRoomCreated(boolean isRoomCreated) {
 		this.isRoomCreated = isRoomCreated;
+	}
+
+	public List<String> getCreatedBrBuilds() {
+		return createdBrBuilds;
+	}
+
+	public void setCreatedBrBuilds(List<String> createdBrBuilds) {
+		this.createdBrBuilds = createdBrBuilds;
 	}
 }

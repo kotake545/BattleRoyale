@@ -69,13 +69,13 @@ public class BRKit {
 
     public static List<ItemStack> getRunnerKit(){
         List<ItemStack> ret = new ArrayList<ItemStack>();
-        ItemStack item1 = new ItemStack(Material.POTION, 10);
+        ItemStack item1 = new ItemStack(Material.POTION, 1);
         Potion pot = new Potion(PotionType.SPEED);
         pot.setHasExtendedDuration(true);
         pot.setSplash(true);
         pot.apply(item1);
         ret.add(item1);
-        ItemStack item2 = new ItemStack(Material.POTION, 10);
+        ItemStack item2 = new ItemStack(Material.POTION, 1);
         Potion pot2 = new Potion(PotionType.NIGHT_VISION);
         pot2.setHasExtendedDuration(true);
         pot2.setSplash(true);
@@ -100,7 +100,7 @@ public class BRKit {
 
     public static List<ItemStack> getSwimerKit(){
         List<ItemStack> ret = new ArrayList<ItemStack>();
-        ret.add(new ItemStack(Material.WATER));
+        ret.add(new ItemStack(Material.WATER_BUCKET));
         ItemStack helmet = new ItemStack(Material.LEATHER_HELMET,1);
         helmet.addEnchantment(Enchantment.OXYGEN, 2);
         ret.add(helmet);
@@ -111,6 +111,7 @@ public class BRKit {
         List<ItemStack> ret = new ArrayList<ItemStack>();
         ret.add(new ItemStack(Material.COAL,10));
         ret.add(new ItemStack(Material.IRON_INGOT,10));
+        ret.add(new ItemStack(Material.LAVA_BUCKET,1));
         ItemStack helmet = new ItemStack(Material.LEATHER_HELMET,1);
         helmet.addEnchantment(Enchantment.PROTECTION_FIRE, 2);
         ret.add(helmet);
