@@ -12,17 +12,27 @@ import org.bukkit.potion.PotionType;
 public class BRKit {
     public static List<ItemStack> getAlchemistKit(){
         List<ItemStack> ret = new ArrayList<ItemStack>();
-        ret.add(new ItemStack(Material.BLAZE_ROD,20));
-        ret.add(new ItemStack(Material.SAND,60));
+        ItemStack item1 = new ItemStack(Material.POTION, 1);
+        Potion pot = new Potion(PotionType.INSTANT_DAMAGE);
+        pot.setSplash(true);
+        pot.apply(item1);
+        ret.add(item1);
+        ret.add(item1);
+        pot = new Potion(PotionType.INSTANT_HEAL);
+        pot.setSplash(true);
+        pot.apply(item1);
+        ret.add(item1);
+        ret.add(item1);
+        pot = new Potion(PotionType.STRENGTH);
+        pot.setHasExtendedDuration(true);
+        pot.setSplash(true);
+        pot.apply(item1);
+        ret.add(item1);
+        ret.add(item1);
+        ret.add(new ItemStack(Material.LAVA_BUCKET,1));
+        ret.add(new ItemStack(Material.WATER_BUCKET,1));
         ret.add(new ItemStack(Material.NETHER_WARTS,20));
-        ret.add(new ItemStack(Material.CAULDRON_ITEM,1));
-        ret.add(new ItemStack(Material.BUCKET,1));
         ret.add(new ItemStack(Material.REDSTONE_BLOCK,1));
-        ret.add(new ItemStack(Material.GLOWSTONE,1));
-        ret.add(new ItemStack(Material.SULPHUR,2));
-        ret.add(new ItemStack(Material.FERMENTED_SPIDER_EYE,5));
-        ret.add(new ItemStack(Material.GOLDEN_CARROT,1));
-        ret.add(new ItemStack(Material.SPIDER_EYE,1));
         return ret;
     }
 
@@ -70,8 +80,8 @@ public class BRKit {
     public static List<ItemStack> getRunnerKit(){
         List<ItemStack> ret = new ArrayList<ItemStack>();
         ItemStack item1 = new ItemStack(Material.POTION, 1);
-        Potion pot = new Potion(PotionType.SPEED);
-        pot.setHasExtendedDuration(true);
+        Potion pot = new Potion(PotionType.POISON);
+        pot.setHasExtendedDuration(false);
         pot.setSplash(true);
         pot.apply(item1);
         ret.add(item1);
@@ -86,11 +96,11 @@ public class BRKit {
 
     public static List<ItemStack> getMinerKit(){
         List<ItemStack> ret = new ArrayList<ItemStack>();
-        ItemStack axe = new ItemStack(Material.DIAMOND_AXE,1);
+        ItemStack axe = new ItemStack(Material.STONE_AXE,1);
         axe.addEnchantment(Enchantment.DIG_SPEED, 4);
-        ItemStack spade = new ItemStack(Material.DIAMOND_SPADE,1);
+        ItemStack spade = new ItemStack(Material.STONE_SPADE,1);
         spade.addEnchantment(Enchantment.DIG_SPEED, 4);
-        ItemStack pickaxe = new ItemStack(Material.DIAMOND_PICKAXE,1);
+        ItemStack pickaxe = new ItemStack(Material.STONE_PICKAXE,1);
         pickaxe.addEnchantment(Enchantment.DIG_SPEED, 4);
         ret.add(axe);
         ret.add(spade);
@@ -120,7 +130,7 @@ public class BRKit {
 
     public static List<ItemStack> getMountaineerKit(){
         List<ItemStack> ret = new ArrayList<ItemStack>();
-        ret.add(new ItemStack(Material.DIAMOND_PICKAXE,1));
+        ret.add(new ItemStack(Material.STONE_PICKAXE,1));
         ret.add(new ItemStack(Material.STRING,64));
         ret.add(new ItemStack(Material.FIREWORK_CHARGE,64));
         ret.add(new ItemStack(Material.SULPHUR,30));

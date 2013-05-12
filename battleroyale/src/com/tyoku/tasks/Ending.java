@@ -5,6 +5,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import com.tyoku.BattleRoyale;
+import com.tyoku.dto.BRGameStatus;
 import com.tyoku.util.BRConst;
 
 public class Ending extends BukkitRunnable {
@@ -16,6 +17,7 @@ public class Ending extends BukkitRunnable {
 
 	@Override
 	public void run() {
+		this.plugin.getBrManager().setGameStatus(BRGameStatus.END);
 		this.plugin.getServer().broadcastMessage(BRConst.MSG_SYS_COLOR + "サーバを30秒後に再起動します。");
     	Player[] players = plugin.getServer().getOnlinePlayers();
         for(int i = 0; i < players.length; i++){

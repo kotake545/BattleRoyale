@@ -8,6 +8,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.bukkit.Location;
@@ -15,6 +16,7 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
+import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
@@ -80,6 +82,8 @@ public class BRBuilding implements Serializable {
 					brblock.setType(bl.getType());
 					brblock.setBlockData(bl.getData());
 					brblock.setEmpty(bl.isEmpty());
+
+					//インベントリの保管
 					if(!bl.isEmpty()){
 						if(bl.getType().equals(Material.CHEST)){
 						    Chest chest = (Chest)bl.getState();
@@ -87,6 +91,14 @@ public class BRBuilding implements Serializable {
 						    brblock.setInventoryStr(InventoryStringDeSerializer.InventoryToString(inventory));
 						}
 					}
+
+					//看板の保管
+					if(bl.getType().equals(Material.SIGN_POST)){
+					    Sign sign = (Sign)bl.getState();
+					    brblock.setSignTexts(sign.getLines());
+					}
+					player.sendMessage(bl.getType().toString());
+
 					buildblocks.add(brblock);
 				}
 			}
@@ -104,11 +116,34 @@ public class BRBuilding implements Serializable {
 		int yd = location.getBlockY()+home.getY();
 		int zd = location.getBlockZ()+home.getZ();
 
+		List<BRBuildBlock> afterBlock = new ArrayList<BRBuildBlock>();
+
 		for(BRBuildBlock brb : this.buildblocks){
 			int xb = brb.getX() + xd;
 			int yb = brb.getY() + yd;
 			int zb = brb.getZ() + zd;
 			Block wb = world.getBlockAt(xb, yb, zb);
+
+			//エンドストーンは無視
+			if(Material.ENDER_STONE.equals(brb.getType())){
+				continue;
+			}
+
+			//複ブロックや周りに影響される系はあとまわし。
+			if(Material.IRON_DOOR_BLOCK.equals(brb.getType())
+					|| Material.WOODEN_DOOR.equals(brb.getType())
+					|| Material.TRIPWIRE_HOOK.equals(brb.getType())
+					|| Material.LADDER.equals(brb.getType())
+					|| Material.BED_BLOCK.equals(brb.getType())
+					|| Material.TRAP_DOOR.equals(brb.getType())
+					){
+				afterBlock.add(brb);
+
+				//とりあえず空気置いとく。
+				wb.setType(Material.AIR);
+				continue;
+			}
+
 			wb.setData(brb.getBlockData());
 			wb.setType(brb.getType());
 			if(!brb.isEmpty()){
@@ -118,7 +153,30 @@ public class BRBuilding implements Serializable {
 				    inventory.setContents(InventoryStringDeSerializer.StringToInventory(brb.getInventoryStr()).getContents());
 				}
 			}
+			if(wb.getType().equals(Material.SIGN_POST)){
+			    Sign sign = (Sign)wb.getState();
+			    String[] txts =  brb.getSignTexts();
+			    if(txts != null && txts.length > 0){
+			    	for(int i = 0; i < txts.length; i++){
+			    		sign.setLine(i, txts[i]);
+			    	}
+			    }
+			    sign.update();
+			}
 		}
+
+		Collections.sort(afterBlock, new BRBuildBlockComparator());
+		for(BRBuildBlock brb : afterBlock){
+			int xb = brb.getX() + xd;
+			int yb = brb.getY() + yd;
+			int zb = brb.getZ() + zd;
+			Block wb = world.getBlockAt(xb, yb, zb);
+			wb.setData(brb.getBlockData());
+			wb.setType(brb.getType());
+			wb.getState().update();
+		}
+
+
 		return true;
 	}
 

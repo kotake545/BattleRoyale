@@ -2,7 +2,6 @@ package com.tyoku.listener;
 
 import java.util.logging.Logger;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -34,7 +33,6 @@ import com.tyoku.dto.BRBuilding;
 import com.tyoku.dto.BRGameStatus;
 import com.tyoku.dto.BRPlayer;
 import com.tyoku.dto.BRPlayerStatus;
-import com.tyoku.tasks.Ending;
 import com.tyoku.util.BRConst;
 import com.tyoku.util.BRUtils;
 
@@ -101,6 +99,13 @@ public class BRPlayerListener implements Listener {
 		//インベントリを空にする。
     	player.getInventory().clear();
 		player.sendMessage(ChatColor.GOLD + "バトロワへようこそ！" + appendMsg);
+		player.sendMessage(ChatColor.GOLD + "現在αテスト公開してます。ご意見、ご要望などはSkype:tyoku123までメッセージをどうぞ！");
+		player.sendMessage(ChatColor.GOLD + "開始時に配られる地図には禁止エリアと、赤い点でBR特製建造物があるかもしれません。");
+		player.sendMessage(ChatColor.GOLD + "コンパスは他の生存プレイヤーを指しているでしょう。");
+		player.sendMessage(ChatColor.GOLD + "ゲーム開始時にサバイバルグッズ入りのチェストをお渡しします。");
+		player.sendMessage(ChatColor.GOLD + "ゲーム開始コマンド:/brgame start");
+		player.sendMessage(ChatColor.GOLD + "ワールド変更投票:/brvotemap [yes|no]");
+		player.sendMessage(ChatColor.GOLD + "さぁ、人を集めて"+ChatColor.RED+"殺し合い"+ChatColor.GOLD+"をしてください。");
 
 	}
 
@@ -143,7 +148,16 @@ public class BRPlayerListener implements Listener {
 	    		|| !BRGameStatus.PLAYING.equals(this.plugin.getBrManager().getGameStatus())
 	    		){
 	    	return;
+		}
+
+	    //自分を見ている人のコンパスを制御
+	    Player[] ps = this.plugin.getServer().getOnlinePlayers();
+	    for(int i = 0; i < ps.length; i++){
+	    	if(plugin.getPlayerStat().get(ps[i].getName()).getCompassName().equals(player.getName())){
+	    		ps[i].setCompassTarget(player.getLocation());
+	    	}
 	    }
+
 	    if(!BRUtils.isGameArea(this.plugin, player)){
 			player.sendMessage(ChatColor.RED + "ゲームエリア外に出た為、5秒後に爆死します。");
 			//殺してステータス変更
@@ -183,7 +197,7 @@ public class BRPlayerListener implements Listener {
 				EntityDamageByEntityEvent e = (EntityDamageByEntityEvent) event;
 				if (e.getDamager() instanceof Player) {
 					Player player = (Player) e.getDamager();
-					Bukkit.broadcastMessage("攻撃者："+player.getName());
+					//Bukkit.broadcastMessage("攻撃者："+player.getName());
 					BRPlayer brp = this.plugin.getPlayerStat().get(player.getName());
 					if (brp == null || BRPlayerStatus.DEAD.equals(brp.getStatus())) {
 						event.setCancelled(true);
@@ -209,32 +223,7 @@ public class BRPlayerListener implements Listener {
 	public void onPlayerDeath(PlayerDeathEvent event){
 		Player player = event.getEntity();
 		BRUtils.setPlayerDeadMode(plugin, player);
-
-		int x = player.getLocation().getBlockX();
-		int y = player.getLocation().getBlockY();
-		int z = player.getLocation().getBlockZ();
-
-		int pb = BRUtils.getPlayerBalance(plugin);
-		System.out.println("Balance Player : " + pb);
-		if(pb > 1){
-			String msg = String.format(
-					"%sが（X:%d, Y:%d, Z:%d）で死亡しました。【残り%d人】", player.getName(),x,y,z,pb);
-			Bukkit.broadcastMessage(BRConst.MSG_SYS_COLOR + msg);
-		}else if(pb == 0){
-			Bukkit.broadcastMessage(BRConst.MSG_SYS_COLOR + "ゲーム終了・・・"+ChatColor.RED+"全員死亡"+BRConst.MSG_SYS_COLOR+"の為、優勝者なし。");
-			this.plugin.setCreateEnding(new Ending(plugin).runTask(plugin));
-		}else if(pb == 1){
-			String winner = "不明";
-			for(BRPlayer brp : this.plugin.getPlayerStat().values()){
-				if(BRPlayerStatus.PLAYING.equals(brp.getStatus())){
-					winner = brp.getName();
-				}
-			}
-			Bukkit.broadcastMessage(BRConst.MSG_SYS_COLOR + String.format(
-					"ゲーム終了・・・優勝者は【"+ChatColor.GOLD+"%s"+BRConst.MSG_SYS_COLOR+"】です！おめでとう！！", winner));
-			this.plugin.setCreateEnding(new Ending(plugin).runTask(plugin));
-		}
-		player.kickPlayer(event.getDeathMessage());
+		BRUtils.playerDeathProcess(plugin, player, event.getDeathMessage());
 	}
 
 	@EventHandler
@@ -263,10 +252,15 @@ public class BRPlayerListener implements Listener {
 	}
 
 	@EventHandler
-	public void onPlayerQuit(PlayerQuitEvent event){
-		int p = BRUtils.getPlayerBalance(plugin);
-		if(p < 1){
-			this.plugin.getServer().shutdown();
+	public void onPlayerQuit(PlayerQuitEvent event) {
+		if (!BRGameStatus.OPENING.equals(this.plugin.getBrManager().getGameStatus())) {
+			BRUtils.setPlayerDeadMode(plugin, event.getPlayer());
+			BRUtils.playerDeathProcess(plugin, event.getPlayer(), null);
+
+//			int p = BRUtils.getPlayerBalance(plugin);
+//			if (p < 1) {
+//				this.plugin.getServer().shutdown();
+//			}
 		}
 	}
 }

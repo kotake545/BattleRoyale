@@ -1,11 +1,15 @@
 package com.tyoku.util;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Random;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Effect;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -18,9 +22,11 @@ import org.bukkit.map.MapView.Scale;
 import org.bukkit.potion.PotionEffect;
 
 import com.tyoku.BattleRoyale;
+import com.tyoku.dto.BRGameStatus;
 import com.tyoku.dto.BRPlayer;
 import com.tyoku.dto.BRPlayerStatus;
 import com.tyoku.map.BrMapRender;
+import com.tyoku.tasks.Ending;
 
 public class BRUtils {
 
@@ -307,19 +313,46 @@ public class BRUtils {
         }
     }
 
+    static public void drawBrbuild(MapCanvas mc, BattleRoyale plugin, byte color){
+    	int baseX = plugin.getBrConfig().getClassRoomPosX();
+    	int baseZ = plugin.getBrConfig().getClassRoomPosZ();
+		int dx = 65 - (int)Math.floor(baseX/8);
+		int dz = 65 - (int)Math.floor(baseZ/8);
+    	for (String str : plugin.getCreatedBrBuilds()) {
+    		String[] builds = str.split(",");
+    		int buildX = (int)Math.floor(Integer.parseInt(builds[1]) / 8);
+    		int buildZ = (int)Math.floor(Integer.parseInt(builds[3]) / 8);
+    		mc.setPixel(buildX + dx, buildZ + dz, color);
+		}
+
+    }
+
+    static public String removeSuffixint(String str){
+    	Pattern p = Pattern.compile("(%d*)$");
+
+    	Matcher m = p.matcher(str);
+    	if(m.find()){
+        	return m.replaceAll("");
+    	}
+    	return str;
+    }
+
 
     static public List<ItemStack> getFirstItemStacks(){
         List<ItemStack> ret = new ArrayList<ItemStack>();
         //共通支給品
-        ret.add(new ItemStack(Material.POTION, 3));
+        ret.add(new ItemStack(Material.POTION, 1));
+        ret.add(new ItemStack(Material.POTION, 1));
+        ret.add(new ItemStack(Material.POTION, 1));
         ret.add(new ItemStack(Material.BREAD, 5));
         ret.add(new ItemStack(Material.COMPASS, 1));
         ret.add(new ItemStack(Material.WOOD_SWORD, 1));
+        Random rand = new Random();
 
         //ボーナスアイテム
         List<ItemStack> bonusItems = new ArrayList<ItemStack>();
         for(int i = 0; i < 2; i++){
-            int bItem = (int)Math.floor(Math.random() * (9)) ;
+            int bItem = rand.nextInt(9);
             switch (bItem) {
             case 0:
                 bonusItems.addAll(BRKit.getAlchemistKit());
@@ -394,5 +427,88 @@ public class BRUtils {
     			cnt++;
     	}
     	return cnt;
+    }
+
+
+    /**
+     * 参加者に音を聞かせる。
+     * @param plugin
+     * @param effect
+     */
+    static public void soundAllPlayer(BattleRoyale plugin, Effect effect){
+		Player[] ps = plugin.getServer().getOnlinePlayers();
+		for(int i = 0; i < ps.length; i++){
+			ps[i].playEffect(ps[i].getLocation(), effect, 1007);
+		}
+    }
+
+    /**
+     * プレイヤーが減ったときにやること。
+     * @param plugin
+     * @param player
+     * @param kickMsg
+     */
+    static public void playerDeathProcess(BattleRoyale plugin, Player player, String kickMsg){
+    	if(plugin.getBrManager().getGameStatus().equals(BRGameStatus.END)){
+    		return;
+    	}
+
+		int x = player.getLocation().getBlockX();
+		int y = player.getLocation().getBlockY();
+		int z = player.getLocation().getBlockZ();
+		int pb = BRUtils.getPlayerBalance(plugin);
+		System.out.println("Balance Player : " + pb);
+		if(pb > 1){
+			String msg = String.format(
+					"%sが（X:%d, Y:%d, Z:%d）で死亡しました。【残り%d人】", player.getName(),x,y,z,pb);
+			Bukkit.broadcastMessage(BRConst.MSG_SYS_COLOR + msg);
+			if(kickMsg != null){
+				player.kickPlayer(kickMsg);
+			}
+			//死んだプレイヤーをさしてたコンパスを修正
+			for(BRPlayer brp : plugin.getPlayerStat().values()){
+				if(brp.getCompassName().equals(player.getName())){
+					brp.setCompassName(BRUtils.getRandomPlayer(plugin, brp.getName()));
+				}
+			}
+
+		}else if(pb == 0){
+			Bukkit.broadcastMessage(BRConst.MSG_SYS_COLOR + "ゲーム終了・・・"+ChatColor.RED+"全員死亡"+BRConst.MSG_SYS_COLOR+"の為、優勝者なし。");
+			plugin.setCreateEnding(new Ending(plugin).runTask(plugin));
+		}else if(pb == 1){
+			String winner = "不明";
+			for(BRPlayer brp : plugin.getPlayerStat().values()){
+				if(BRPlayerStatus.PLAYING.equals(brp.getStatus())){
+					winner = brp.getName();
+				}
+			}
+			Bukkit.broadcastMessage(BRConst.MSG_SYS_COLOR + String.format(
+					"ゲーム終了・・・優勝者は【"+ChatColor.GOLD+"%s"+BRConst.MSG_SYS_COLOR+"】です！おめでとう！！", winner));
+			plugin.setCreateEnding(new Ending(plugin).runTask(plugin));
+		}
+    }
+
+    /**
+     * ランダムにゲーム中のプレイヤーを取得
+     * @param plugin
+     * @return
+     */
+    static public String getRandomPlayer(BattleRoyale plugin, String ignore){
+    	Collection<BRPlayer> brps = plugin.getPlayerStat().values();
+    	List<String> p = new ArrayList<String>();
+    	for(BRPlayer brp : brps){
+    		if(BRPlayerStatus.PLAYING.equals(brp.getStatus())){
+    			p.add(brp.getName());
+    		}
+    	}
+    	if(ignore != null){
+    		p.remove(ignore);
+    	}
+    	if(p.isEmpty()){
+    		return ignore;
+    	}
+    	Random rand = new Random();
+    	int ridx = rand.nextInt(p.size());
+    	return p.get(ridx);
     }
 }

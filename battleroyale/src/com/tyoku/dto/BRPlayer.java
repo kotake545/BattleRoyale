@@ -1,11 +1,13 @@
 package com.tyoku.dto;
 
+
 public class BRPlayer {
 	private String name;
 	private short durability;
 	private BRPlayerStatus status;
 	private int playCount = 0;
 	private boolean isFiestChestOpend = true;
+	private String compassName;
 
 	public String getName() {
 		return name;
@@ -36,5 +38,11 @@ public class BRPlayer {
 	}
 	public void setFiestChestOpend(boolean isFiestChestOpend) {
 		this.isFiestChestOpend = isFiestChestOpend;
+	}
+	public String getCompassName() {
+		return compassName;
+	}
+	public void setCompassName(String compassName) {
+		this.compassName = compassName;
 	}
 }

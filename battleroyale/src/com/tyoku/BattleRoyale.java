@@ -10,20 +10,14 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.block.Block;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
-import com.tyoku.commands.BRBuildCmd;
-import com.tyoku.commands.BRBuildList;
+import com.tyoku.commands.BRMapChange;
 import com.tyoku.commands.BrGame;
-import com.tyoku.commands.GameArea;
-import com.tyoku.commands.StartPosCmd;
 import com.tyoku.dto.BRBuilding;
 import com.tyoku.dto.BRGameStatus;
 import com.tyoku.dto.BRManager;
@@ -48,8 +42,7 @@ public class BattleRoyale extends JavaPlugin {
 	private Map<String, BRBuilding> brBuilding;
 	private boolean isRoomCreated = false;
 	private List<String> createdBrBuilds;
-
-
+	private Map<String, String> votemap;
 	private Location location1;
 	private Location location2;
 	private Location locationBuild;
@@ -72,6 +65,7 @@ public class BattleRoyale extends JavaPlugin {
 		this.randomMapBlocks = BRUtils.getRundumMRMapBlocks();
 		nextAreaBlocks = new ArrayList<String>();
 		deadAreaBlocks = new ArrayList<String>();
+		votemap = new HashMap<String, String>();
 		this.createdBrBuilds = new ArrayList<String>();
 
 		setBrBuilding(new HashMap<String, BRBuilding>());
@@ -92,11 +86,12 @@ public class BattleRoyale extends JavaPlugin {
 
 		//コマンド登録
 		this.log.info("BattleRoyale commands preparing....");
-		this.getCommand("setroom").setExecutor(new StartPosCmd(this));
+		//this.getCommand("setroom").setExecutor(new StartPosCmd(this));
 		this.getCommand("brgame").setExecutor(new BrGame(this));
-		this.getCommand("setbrarea").setExecutor(new GameArea(this));
-		this.getCommand("brbuild").setExecutor(new BRBuildCmd(this));
-		this.getCommand("brblist").setExecutor(new BRBuildList(this));
+		//this.getCommand("setbrarea").setExecutor(new GameArea(this));
+		//this.getCommand("brbuild").setExecutor(new BRBuildCmd(this));
+		//this.getCommand("brblist").setExecutor(new BRBuildList(this));
+		this.getCommand("brvotemap").setExecutor(new BRMapChange(this));
 
 		//リスナー登録
 		PluginManager pm = this.getServer().getPluginManager();
@@ -148,13 +143,14 @@ public class BattleRoyale extends JavaPlugin {
 
 		World w = this.getServer().getWorlds().get(0);
 		int hugo = 1;
+		Random rand = new Random();
 		for(int i = buildNum; i > 0; i-- ){
-			Random rnd = new Random();
-			int x = (w.getSpawnLocation().getBlockX() + rnd.nextInt(300)+80)*(rnd.nextInt(2)==0?-1:1);
+			int x = w.getSpawnLocation().getBlockX() + ((rand.nextInt(360)+60) * ((rand.nextInt(10)%2)==0?-1:1));
 			int y = 64;
-			int z = (w.getSpawnLocation().getBlockZ() + rnd.nextInt(300)+80)*(rnd.nextInt(2)==0?-1:1);
+			int z = w.getSpawnLocation().getBlockZ() + ((rand.nextInt(360)+60) * ((rand.nextInt(10)%2)==0?-1:1));
 
-			int bItem = (int)Math.floor(Math.random() * (this.brBuilding.size()-1)) ;
+			//int bItem = (int)Math.floor(Math.random() * (this.brBuilding.size()-1)) ;
+			int bItem = rand.nextInt(this.brBuilding.size());
 			int j = 0;
 			for(BRBuilding brb : this.brBuilding.values()){
 				if(j++ == bItem){
@@ -162,17 +158,11 @@ public class BattleRoyale extends JavaPlugin {
 						buildNum++;
 						break;
 					}
-					while(true){
-						Block block = w.getBlockAt(new Location(w, x, y, z));
-						if(Material.AIR.equals(block.getType())){
-							y--;
-						}else{
-							break;
-						}
-					}
+					y = w.getHighestBlockYAt(x,z);
 					brb.create(w, new Location(w, x, y, z));
 					System.out.println(String.format("%sを座標（X:%d Y:%d Z:%d）", brb.getName(), x, y, z));
-					this.createdBrBuilds.add(ChatColor.AQUA+brb.getName()+" - "+ChatColor.GOLD+"座標(X:"+Integer.toString(x)+" Y:"+Integer.toString(y)+" Z:"+Integer.toString(z)+")");
+					//this.createdBrBuilds.add(ChatColor.AQUA+brb.getName()+" - "+ChatColor.GOLD+"座標(X:"+Integer.toString(x)+" Y:"+Integer.toString(y)+" Z:"+Integer.toString(z)+")");
+					this.createdBrBuilds.add(String.format("%s,%d,%d,%d",BRUtils.removeSuffixint(brb.getName()),x,y,z));
 					break;
 				}
 			}
@@ -313,5 +303,13 @@ public class BattleRoyale extends JavaPlugin {
 
 	public void setCreatedBrBuilds(List<String> createdBrBuilds) {
 		this.createdBrBuilds = createdBrBuilds;
+	}
+
+	public Map<String, String> getVotemap() {
+		return votemap;
+	}
+
+	public void setVotemap(Map<String, String> votemap) {
+		this.votemap = votemap;
 	}
 }

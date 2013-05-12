@@ -13,6 +13,7 @@ public class BRBuildBlock implements Serializable{
 	private Material type;
 	private byte blockData;
 	private boolean isEmpty;
+	private String[] signTexts;
 	private String inventoryStr;
 
 	public BRBuildBlock() {
@@ -72,5 +73,13 @@ public class BRBuildBlock implements Serializable{
 
 	public void setInventoryStr(String inventoryStr) {
 		this.inventoryStr = inventoryStr;
+	}
+
+	public String[] getSignTexts() {
+		return signTexts;
+	}
+
+	public void setSignTexts(String[] signTexts) {
+		this.signTexts = signTexts;
 	}
 }

@@ -11,6 +11,7 @@ import org.bukkit.map.MapView.Scale;
 import com.tyoku.BattleRoyale;
 
 public class MapListener implements Listener {
+	@SuppressWarnings("unused")
 	private Logger log;
 	@SuppressWarnings("unused")
 	private BattleRoyale plugin;
@@ -24,11 +25,5 @@ public class MapListener implements Listener {
 	public void onMapInit(MapInitializeEvent event){
 		MapView mv = event.getMap();
 		mv.setScale(Scale.FAR);
-		this.log.info(String.format("マップRenderSize=%d", mv.getRenderers().size()));
-		//mv.addRenderer(new BrMapRender());
-
-		int cx = mv.getCenterX();
-		int cz = mv.getCenterZ();
-		this.log.info(String.format("マップの中央座標(X:%d,Z:%d)", cx,cz));
 	}
 }

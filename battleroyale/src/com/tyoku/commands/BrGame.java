@@ -1,7 +1,10 @@
 package com.tyoku.commands;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -46,14 +49,35 @@ public class BrGame extends BRCmdExe {
 
 			this.plugin.getBrManager().setGameStatus(BRGameStatus.PREPARE);
 
+			World world = this.plugin.getServer().getWorlds().get(0);
+
+			//教室の出口破壊
+		    int x = this.plugin.getBrConfig().getClassRoomPosX();
+		    int z = this.plugin.getBrConfig().getClassRoomPosZ()-6;
+		    int y = this.plugin.getBrConfig().getClassRoomPosY();
+		    for(int i = 0; i < 3; i++){
+		    	world.getBlockAt(x, y+i, z).breakNaturally();
+		    }
+		    Location location = world.getBlockAt(x, y, z).getLocation();
+
+		    //音を聞かせる
+		    world.playSound(location, Sound.GLASS, 10, 1);
+		    //BRUtils.soundAllPlayer(plugin, Effect.ZOMBIE_DESTROY_DOOR);
+
+
 			Player[] ps = this.plugin.getServer().getOnlinePlayers();
 
 			//参加者にバトロワMAPとアイテム配布
 			for(int i = 0; i < ps.length; i++){
+				//コンパスのターゲットを設定
+				String pname = BRUtils.getRandomPlayer(plugin, ps[i].getName());
+				BRPlayer brp = plugin.getPlayerStat().get(ps[i].getName());
+				brp.setCompassName(pname);
+				//plugin.getServer().broadcastMessage(brp.getName()+"->"+brp.getCompassName());
+
 				ps[i].getInventory().addItem(new ItemStack(Material.CHEST,1));
 				ps[i].getInventory().addItem(new ItemStack(Material.TORCH,5));
 				ps[i].getInventory().addItem(BRUtils.getBRMap(this.plugin, ps[i], (short)i));
-				ps[i].setCompassTarget(ps[i==ps.length-1?0:i+1].getLocation());
 			}
 
 			//禁止エリア作成非同期処理
