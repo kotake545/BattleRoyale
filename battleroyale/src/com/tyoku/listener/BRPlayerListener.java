@@ -99,7 +99,8 @@ public class BRPlayerListener implements Listener {
 		//インベントリを空にする。
     	player.getInventory().clear();
 		player.sendMessage(ChatColor.GOLD + "バトロワへようこそ！" + appendMsg);
-		player.sendMessage(ChatColor.GOLD + "現在αテスト公開してます。ご意見、ご要望などはSkype:tyoku123までメッセージをどうぞ！");
+		player.sendMessage(ChatColor.GOLD + "現在βテスト公開してます。ご意見、ご要望などはSkype:tyoku123までメッセージをどうぞ！");
+		player.sendMessage(ChatColor.GOLD + "ソース公開、意見求む（汚いですが…）https://github.com/tyoku/battleroyale/");
 		player.sendMessage(ChatColor.GOLD + "開始時に配られる地図には禁止エリアと、赤い点でBR特製建造物があるかもしれません。");
 		player.sendMessage(ChatColor.GOLD + "コンパスは他の生存プレイヤーを指しているでしょう。");
 		player.sendMessage(ChatColor.GOLD + "ゲーム開始時にサバイバルグッズ入りのチェストをお渡しします。");

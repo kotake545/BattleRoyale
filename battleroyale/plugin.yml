@@ -1,6 +1,6 @@
 name: battleroyale
 main: com.tyoku.BattleRoyale
-version: 0.0.2
+version: 0.1.0
 commands:
 #   setroom:
 #      description: 初回スポーン位置を設定します。オプションでx,y,z座標を整数で指定も可能。
