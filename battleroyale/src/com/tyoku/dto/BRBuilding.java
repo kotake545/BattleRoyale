@@ -110,7 +110,7 @@ public class BRBuilding implements Serializable {
 	 * @param world
 	 * @param buildLocation
 	 */
-	public boolean create(World world, Location location){
+	public boolean create(World world, Location location, boolean igunoreEnderStone){
 		//座標差分取得
 		int xd = location.getBlockX()+home.getX();
 		int yd = location.getBlockY()+home.getY();
@@ -125,7 +125,7 @@ public class BRBuilding implements Serializable {
 			Block wb = world.getBlockAt(xb, yb, zb);
 
 			//エンドストーンは無視
-			if(Material.ENDER_STONE.equals(brb.getType())){
+			if(igunoreEnderStone && Material.ENDER_STONE.equals(brb.getType())){
 				continue;
 			}
 

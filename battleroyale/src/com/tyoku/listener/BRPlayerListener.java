@@ -18,7 +18,10 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityTargetEvent;
+import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
@@ -56,7 +59,7 @@ public class BRPlayerListener implements Listener {
 
 	    if(x == 1000 && y == 1000 && z == 1000){
 		    x = player.getLocation().getBlockX();
-		    z = player.getLocation().getBlockZ()+13;
+		    z = player.getLocation().getBlockZ()+12;
 		    y = player.getLocation().getBlockY()+6;
 		    this.plugin.getBrConfig().setClassRoomPosX(x);
 		    this.plugin.getBrConfig().setClassRoomPosZ(z);
@@ -69,7 +72,7 @@ public class BRPlayerListener implements Listener {
 	    				player.getWorld()
 	    				, player.getLocation().getBlockX()
 	    				, player.getLocation().getBlockY()
-	    				, player.getLocation().getBlockZ()));
+	    				, player.getLocation().getBlockZ()), true);
 	    		player.getWorld().setSpawnLocation(x, y, z);
 	    	}
 	    	this.plugin.setRoomCreated(true);
@@ -106,8 +109,8 @@ public class BRPlayerListener implements Listener {
 		player.sendMessage(ChatColor.GOLD + "ゲーム開始時にサバイバルグッズ入りのチェストをお渡しします。");
 		player.sendMessage(ChatColor.GOLD + "ゲーム開始コマンド:/brgame start");
 		player.sendMessage(ChatColor.GOLD + "ワールド変更投票:/brvotemap [yes|no]");
+		player.sendMessage(ChatColor.GOLD + "観戦用テレポート:/brtp <playername>");
 		player.sendMessage(ChatColor.GOLD + "さぁ、人を集めて"+ChatColor.RED+"殺し合い"+ChatColor.GOLD+"をしてください。");
-
 	}
 
 	@EventHandler
@@ -144,7 +147,8 @@ public class BRPlayerListener implements Listener {
 	    Player player = event.getPlayer();
 	    BRPlayer brp = this.plugin.getPlayerStat().get(player.getName());
 
-	    if(!player.isOnline()
+	    if(brp == null
+	    		|| !player.isOnline()
 	    		|| BRPlayerStatus.DEAD.equals(brp.getStatus())
 	    		|| !BRGameStatus.PLAYING.equals(this.plugin.getBrManager().getGameStatus())
 	    		){
@@ -180,6 +184,13 @@ public class BRPlayerListener implements Listener {
 	    }else{
 	        //player.sendMessage(ChatColor.GOLD + "ゲームエリア内");
 	    }
+	}
+
+	@EventHandler
+	public void onFoodLevelChange(FoodLevelChangeEvent event){
+		if(plugin.getBrManager().getGameStatus().equals(BRGameStatus.OPENING)){
+			event.setCancelled(true);
+		}
 	}
 
 	@EventHandler
@@ -238,6 +249,22 @@ public class BRPlayerListener implements Listener {
 		}
 	}
 
+	@EventHandler
+	public void onPlayerInteract(PlayerInteractEvent event){
+		BRPlayer brp = this.plugin.getPlayerStat().get(event.getPlayer().getName());
+		if (brp == null || BRPlayerStatus.DEAD.equals(brp.getStatus())) {
+			event.setCancelled(true);
+		}
+	}
+
+	@EventHandler
+	public void onPlayerInteractEntity(PlayerInteractEntityEvent event){
+		BRPlayer brp = this.plugin.getPlayerStat().get(event.getPlayer().getName());
+		if (brp == null || BRPlayerStatus.DEAD.equals(brp.getStatus())) {
+			event.setCancelled(true);
+		}
+	}
+
 
 	@EventHandler
 	public void onPlayerPortal(PlayerPortalEvent event) {
@@ -254,14 +281,9 @@ public class BRPlayerListener implements Listener {
 
 	@EventHandler
 	public void onPlayerQuit(PlayerQuitEvent event) {
+		BRUtils.setPlayerDeadMode(plugin, event.getPlayer());
 		if (!BRGameStatus.OPENING.equals(this.plugin.getBrManager().getGameStatus())) {
-			BRUtils.setPlayerDeadMode(plugin, event.getPlayer());
 			BRUtils.playerDeathProcess(plugin, event.getPlayer(), null);
-
-//			int p = BRUtils.getPlayerBalance(plugin);
-//			if (p < 1) {
-//				this.plugin.getServer().shutdown();
-//			}
 		}
 	}
 }

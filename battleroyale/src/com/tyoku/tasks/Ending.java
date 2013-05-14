@@ -17,6 +17,10 @@ public class Ending extends BukkitRunnable {
 
 	@Override
 	public void run() {
+		if(this.plugin.getBrManager().getGameStatus().equals(BRGameStatus.END)){
+			Bukkit.shutdown();
+			return;
+		}
 		this.plugin.getBrManager().setGameStatus(BRGameStatus.END);
 		this.plugin.getServer().broadcastMessage(BRConst.MSG_SYS_COLOR + "サーバを30秒後に再起動します。");
     	Player[] players = plugin.getServer().getOnlinePlayers();

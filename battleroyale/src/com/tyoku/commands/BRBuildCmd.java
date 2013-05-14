@@ -16,7 +16,7 @@ public class BRBuildCmd extends BRCmdExe {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String paramString, String[] args) {
-		if(args.length != 1 && args.length != 2 ){
+		if(args.length != 1 && args.length != 2  && args.length != 3){
 			return false;
 		}
 		try {
@@ -48,14 +48,20 @@ public class BRBuildCmd extends BRCmdExe {
 
 				//建築
 				if("create".equals(args[0])){
-					if(args.length != 2){
+					if(args.length != 2  && args.length != 3){
 						return false;
 					}
+
+					boolean ignore = true;
+					if(args.length == 3){
+						ignore = false;
+					}
+
 					BRBuilding brb = this.plugin.getBrBuilding().get(args[1]);
 					if(brb == null || !brb.isCreatable()){
 						player.sendMessage(ChatColor.YELLOW + "建築物が存在しないか、建築できる状態ではありません。");
 					}
-					return brb.create(player.getWorld(), player.getLocation());
+					return brb.create(player.getWorld(), player.getLocation(), ignore);
 				}
 
 				//保存

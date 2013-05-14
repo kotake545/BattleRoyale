@@ -405,7 +405,13 @@ public class BRUtils {
 
     static public void setPlayerDeadMode(BattleRoyale plugin, Player player){
     	clearPlayerStatus(player);
-    	plugin.getPlayerStat().remove(player.getName());
+    	if(plugin.getPlayerStat().get(player.getName()) == null){
+    		BRPlayer brp = new BRPlayer();
+    		brp.setName(player.getName());
+    		plugin.getPlayerStat().put(player.getName(), brp);
+    	}
+    	plugin.getPlayerStat().get(player.getName()).setStatus(BRPlayerStatus.DEAD);
+    	//plugin.getPlayerStat().remove(player.getName());
 		player.setDisplayName(BRConst.LIST_COLOR_DEAD + player.getName());
 		player.setPlayerListName(player.getDisplayName());
     	player.setAllowFlight(true);
@@ -467,7 +473,7 @@ public class BRUtils {
 			}
 			//死んだプレイヤーをさしてたコンパスを修正
 			for(BRPlayer brp : plugin.getPlayerStat().values()){
-				if(brp.getCompassName().equals(player.getName())){
+				if(brp.getCompassName() != null && brp.getCompassName().equals(player.getName())){
 					brp.setCompassName(BRUtils.getRandomPlayer(plugin, brp.getName()));
 				}
 			}

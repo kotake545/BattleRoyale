@@ -17,6 +17,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
 import com.tyoku.commands.BRMapChange;
+import com.tyoku.commands.BRTereport;
 import com.tyoku.commands.BrGame;
 import com.tyoku.dto.BRBuilding;
 import com.tyoku.dto.BRGameStatus;
@@ -92,6 +93,7 @@ public class BattleRoyale extends JavaPlugin {
 		//this.getCommand("brbuild").setExecutor(new BRBuildCmd(this));
 		//this.getCommand("brblist").setExecutor(new BRBuildList(this));
 		this.getCommand("brvotemap").setExecutor(new BRMapChange(this));
+		this.getCommand("brtp").setExecutor(new BRTereport(this));
 
 		//リスナー登録
 		PluginManager pm = this.getServer().getPluginManager();
@@ -159,7 +161,7 @@ public class BattleRoyale extends JavaPlugin {
 						break;
 					}
 					y = w.getHighestBlockYAt(x,z);
-					brb.create(w, new Location(w, x, y, z));
+					brb.create(w, new Location(w, x, y, z), true);
 					System.out.println(String.format("%sを座標（X:%d Y:%d Z:%d）", brb.getName(), x, y, z));
 					//this.createdBrBuilds.add(ChatColor.AQUA+brb.getName()+" - "+ChatColor.GOLD+"座標(X:"+Integer.toString(x)+" Y:"+Integer.toString(y)+" Z:"+Integer.toString(z)+")");
 					this.createdBrBuilds.add(String.format("%s,%d,%d,%d",BRUtils.removeSuffixint(brb.getName()),x,y,z));
