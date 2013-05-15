@@ -1,5 +1,6 @@
 package com.tyoku.commands;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -42,6 +43,7 @@ public class BrGame extends BRCmdExe {
 			if(paramArrayOfString.length != 1){
 				return false;
 			}
+
 			if(BRUtils.getPlayerBalance(plugin) < 3){
 				p.sendMessage(ChatColor.RED + "ゲーム開始には最低3名のプレイヤーが必要です。");
 				return true;
@@ -58,7 +60,7 @@ public class BrGame extends BRCmdExe {
 
 			//教室の出口破壊
 		    int x = this.plugin.getBrConfig().getClassRoomPosX();
-		    int z = this.plugin.getBrConfig().getClassRoomPosZ()-6;
+		    int z = this.plugin.getBrConfig().getClassRoomPosZ()-5;
 		    int y = this.plugin.getBrConfig().getClassRoomPosY();
 		    for(int i = 0; i < 3; i++){
 		    	world.getBlockAt(x, y+i, z).breakNaturally();
@@ -77,11 +79,14 @@ public class BrGame extends BRCmdExe {
 				//コンパスのターゲットを設定
 				String pname = BRUtils.getRandomPlayer(plugin, ps[i].getName());
 				BRPlayer brp = plugin.getPlayerStat().get(ps[i].getName());
+				//Bukkit.broadcastMessage(ps[i].getName() + " -> "+ pname);
+				if(brp == null){
+					Bukkit.broadcastMessage("brpはnull");
+				}
 				brp.setCompassName(pname);
-				//plugin.getServer().broadcastMessage(brp.getName()+"->"+brp.getCompassName());
 
 				ps[i].getInventory().addItem(new ItemStack(Material.CHEST,1));
-				ps[i].getInventory().addItem(new ItemStack(Material.TORCH,5));
+				ps[i].getInventory().addItem(new ItemStack(Material.TORCH,10));
 				ps[i].getInventory().addItem(BRUtils.getBRMap(this.plugin, ps[i], (short)i));
 			}
 

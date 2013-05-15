@@ -46,9 +46,7 @@ public class BRUtils {
      * @param message
      */
     static public void announce(BattleRoyale plugin, String message){
-            for (Player p : plugin.getServer().getOnlinePlayers()) {
-            p.sendMessage(message);
-        }
+    	plugin.getServer().broadcastMessage(ChatColor.AQUA + "[放送] " + ChatColor.YELLOW + message);
     }
 
 	/**
@@ -342,11 +340,11 @@ public class BRUtils {
         List<ItemStack> ret = new ArrayList<ItemStack>();
         //共通支給品
         ret.add(new ItemStack(Material.POTION, 1));
-        ret.add(new ItemStack(Material.POTION, 1));
-        ret.add(new ItemStack(Material.POTION, 1));
         ret.add(new ItemStack(Material.BREAD, 5));
         ret.add(new ItemStack(Material.COMPASS, 1));
-        ret.add(new ItemStack(Material.WOOD_SWORD, 1));
+        ret.add(new ItemStack(Material.STONE_SWORD, 1));
+        ret.add(new ItemStack(Material.LEATHER, 16));
+        ret.add(new ItemStack(Material.WORKBENCH, 1));
         Random rand = new Random();
 
         //ボーナスアイテム
@@ -459,15 +457,11 @@ public class BRUtils {
     		return;
     	}
 
-		int x = player.getLocation().getBlockX();
-		int y = player.getLocation().getBlockY();
-		int z = player.getLocation().getBlockZ();
 		int pb = BRUtils.getPlayerBalance(plugin);
-		System.out.println("Balance Player : " + pb);
 		if(pb > 1){
 			String msg = String.format(
-					"%sが（X:%d, Y:%d, Z:%d）で死亡しました。【残り%d人】", player.getName(),x,y,z,pb);
-			Bukkit.broadcastMessage(BRConst.MSG_SYS_COLOR + msg);
+					"%sが死亡しました。【残り%d人】", player.getName(),pb);
+			BRUtils.announce(plugin, msg);
 			if(kickMsg != null){
 				player.kickPlayer(kickMsg);
 			}
@@ -477,9 +471,30 @@ public class BRUtils {
 					brp.setCompassName(BRUtils.getRandomPlayer(plugin, brp.getName()));
 				}
 			}
+			if(pb == 2){
+				BRUtils.announce(plugin, "残りプレイヤー2名になりましたので、ラストバトルへ移行します。");
+				BRUtils.createLastStage(plugin);
+				plugin.setLastbattle(true);
+				plugin.getDeadAreaBlocks().clear();
+				plugin.getRandomMapBlocks().clear();
+				plugin.getNextAreaBlocks().clear();
+
+		    	int cnt = 1;
+		    	Player[] ps = plugin.getServer().getOnlinePlayers();
+		    	for(BRPlayer p : plugin.getPlayerStat().values()){
+		    		if(BRPlayerStatus.PLAYING.equals(p.getStatus())){
+		    			for(int i = 0; i < ps.length; i++){
+		    				if(ps[i].getName().equals(p.getName())){
+		    					BRUtils.setLastBattlePlayer(plugin, ps[i], cnt++);
+		    					break;
+		    				}
+		    			}
+		    		}
+		    	}
+			}
 
 		}else if(pb == 0){
-			Bukkit.broadcastMessage(BRConst.MSG_SYS_COLOR + "ゲーム終了・・・"+ChatColor.RED+"全員死亡"+BRConst.MSG_SYS_COLOR+"の為、優勝者なし。");
+			BRUtils.announce(plugin, "ゲーム終了・・・"+ChatColor.RED+"全員死亡"+BRConst.MSG_SYS_COLOR+"の為、優勝者なし。");
 			plugin.setCreateEnding(new Ending(plugin).runTask(plugin));
 		}else if(pb == 1){
 			String winner = "不明";
@@ -488,7 +503,7 @@ public class BRUtils {
 					winner = brp.getName();
 				}
 			}
-			Bukkit.broadcastMessage(BRConst.MSG_SYS_COLOR + String.format(
+			BRUtils.announce(plugin, String.format(
 					"ゲーム終了・・・優勝者は【"+ChatColor.GOLD+"%s"+BRConst.MSG_SYS_COLOR+"】です！おめでとう！！", winner));
 			plugin.setCreateEnding(new Ending(plugin).runTask(plugin));
 		}
@@ -517,4 +532,34 @@ public class BRUtils {
     	int ridx = rand.nextInt(p.size());
     	return p.get(ridx);
     }
+
+    static public void createLastStage(BattleRoyale plugin){
+		Location battleLocation = new Location(plugin.getServer().getWorlds().get(0),
+				plugin.getBrConfig().getClassRoomPosX(),
+				plugin.getBrConfig().getClassRoomPosY() + 50,
+				plugin.getBrConfig().getClassRoomPosZ());
+		plugin.getBrBuilding().get("lastbattle").create(plugin.getServer().getWorlds().get(0), battleLocation, true);
+    }
+
+	static public void setLastBattlePlayer(BattleRoyale plugin, Player player, int position) {
+		int addNum = 0;
+		if(position == 2){
+			addNum = -14;
+		}
+		Location battleLocation = new Location(player.getWorld(),
+					plugin.getBrConfig().getClassRoomPosX() + addNum,
+					plugin.getBrConfig().getClassRoomPosY() + 50,
+					plugin.getBrConfig().getClassRoomPosZ() + addNum);
+		player.teleport(battleLocation);
+
+	}
+
+//	/**
+//	 * プレイヤーのフィールド上での名前を変更する。
+//	 * @param player
+//	 * @param newName
+//	 */
+//	static public void setPlayerFieldName(Player player, String newName) {
+//		((CraftPlayer) player).getHandle().name = newName;
+//	}
 }

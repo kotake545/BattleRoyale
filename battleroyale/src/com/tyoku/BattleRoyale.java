@@ -47,6 +47,7 @@ public class BattleRoyale extends JavaPlugin {
 	private Location location1;
 	private Location location2;
 	private Location locationBuild;
+	private boolean isLastbattle = false;
 
 //	@SuppressWarnings("unused")
 //	private DBManager dbm = new DBManager("battleroyale.sqlite3");
@@ -156,7 +157,7 @@ public class BattleRoyale extends JavaPlugin {
 			int j = 0;
 			for(BRBuilding brb : this.brBuilding.values()){
 				if(j++ == bItem){
-					if("home".equals(brb.getName())){
+					if("home".equals(brb.getName()) || "lastbattle".equals(brb.getName())){
 						buildNum++;
 						break;
 					}
@@ -313,5 +314,13 @@ public class BattleRoyale extends JavaPlugin {
 
 	public void setVotemap(Map<String, String> votemap) {
 		this.votemap = votemap;
+	}
+
+	public boolean isLastbattle() {
+		return isLastbattle;
+	}
+
+	public void setLastbattle(boolean isLastbattle) {
+		this.isLastbattle = isLastbattle;
 	}
 }

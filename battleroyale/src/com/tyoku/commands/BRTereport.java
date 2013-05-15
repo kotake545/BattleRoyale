@@ -28,19 +28,19 @@ public class BRTereport extends BRCmdExe {
 		Player player = (Player)sender;
 		BRPlayer brp = plugin.getPlayerStat().get(player.getName());
 
-		if(BRPlayerStatus.PLAYING.equals(brp.getStatus())){
+		if(brp == null || BRPlayerStatus.PLAYING.equals(brp.getStatus())){
 			player.sendMessage("観戦者専用コマンドです。");
 			return true;
 		}
 
-		if(player.getName().equals(args[1])){
+		if(player.getName().equals(args[0])){
 			player.sendMessage("自分へ飛ぶことはできません。");
 			return true;
 		}
 
 		Player[] ps = plugin.getServer().getOnlinePlayers();
 		for(int i = 0; i < ps.length; i++){
-			if(ps[i].getName().equals(args[1])){
+			if(ps[i].getName().equals(args[0])){
 				player.teleport(ps[i].getLocation());
 			}
 		}

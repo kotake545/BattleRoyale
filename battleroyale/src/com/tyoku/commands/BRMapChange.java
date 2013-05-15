@@ -48,7 +48,7 @@ public class BRMapChange extends BRCmdExe {
 		int yes = getYesCount();
 		int no = getNoCount();
 
-		this.plugin.getServer().broadcastMessage(BRConst.MSG_SYS_COLOR + String.format(
+		BRUtils.announce(plugin, String.format(
 				"MAP変更希望(YES:"+ChatColor.GOLD+"%d "+BRConst.MSG_SYS_COLOR+"NO:"+ChatColor.GOLD+"%d"+BRConst.MSG_SYS_COLOR+")"
 				, yes, no));
 
@@ -57,11 +57,11 @@ public class BRMapChange extends BRCmdExe {
 		}
 
 		if(isChangeable()){
-			this.plugin.getServer().broadcastMessage(BRConst.MSG_SYS_COLOR + "MAP変更可決");
+			BRUtils.announce(this.plugin, "MAP変更可決");
 			this.plugin.setCreateEnding(new Ending(plugin).runTask(plugin));
 			return true;
 		}else{
-			this.plugin.getServer().broadcastMessage(BRConst.MSG_SYS_COLOR + "参加プレイヤーが3人に満たない為マップ変更できません。");
+			BRUtils.announce(this.plugin, "参加プレイヤーが3人に満たない為マップ変更できません。");
 			return true;
 		}
 	}

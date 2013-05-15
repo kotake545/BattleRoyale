@@ -20,6 +20,7 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -158,7 +159,9 @@ public class BRPlayerListener implements Listener {
 	    //自分を見ている人のコンパスを制御
 	    Player[] ps = this.plugin.getServer().getOnlinePlayers();
 	    for(int i = 0; i < ps.length; i++){
-	    	if(plugin.getPlayerStat().get(ps[i].getName()).getCompassName().equals(player.getName())){
+	    	BRPlayer tmpbrp = plugin.getPlayerStat().get(ps[i].getName());
+	    	log.info("CompassAllow:"+player.getName()+" -> "+ps[i].getName());
+	    	if(tmpbrp != null && !tmpbrp.getStatus().equals(BRPlayerStatus.DEAD)&& tmpbrp.getCompassName().equals(player.getName())){
 	    		ps[i].setCompassTarget(player.getLocation());
 	    	}
 	    }
@@ -209,7 +212,6 @@ public class BRPlayerListener implements Listener {
 				EntityDamageByEntityEvent e = (EntityDamageByEntityEvent) event;
 				if (e.getDamager() instanceof Player) {
 					Player player = (Player) e.getDamager();
-					//Bukkit.broadcastMessage("攻撃者："+player.getName());
 					BRPlayer brp = this.plugin.getPlayerStat().get(player.getName());
 					if (brp == null || BRPlayerStatus.DEAD.equals(brp.getStatus())) {
 						event.setCancelled(true);
@@ -286,4 +288,15 @@ public class BRPlayerListener implements Listener {
 			BRUtils.playerDeathProcess(plugin, event.getPlayer(), null);
 		}
 	}
+
+	@EventHandler
+	public void playerChat(AsyncPlayerChatEvent event) {
+		Player player = event.getPlayer();
+		BRPlayer brp = plugin.getPlayerStat().get(player.getName());
+		if(brp != null && brp.getStatus().equals(BRPlayerStatus.PLAYING)){
+		}else{
+			event.setMessage(ChatColor.GRAY + event.getMessage());
+		}
+	}
+
 }

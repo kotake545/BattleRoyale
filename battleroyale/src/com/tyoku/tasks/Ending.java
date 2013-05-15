@@ -6,7 +6,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import com.tyoku.BattleRoyale;
 import com.tyoku.dto.BRGameStatus;
-import com.tyoku.util.BRConst;
+import com.tyoku.util.BRUtils;
 
 public class Ending extends BukkitRunnable {
 	private final BattleRoyale plugin;
@@ -22,7 +22,7 @@ public class Ending extends BukkitRunnable {
 			return;
 		}
 		this.plugin.getBrManager().setGameStatus(BRGameStatus.END);
-		this.plugin.getServer().broadcastMessage(BRConst.MSG_SYS_COLOR + "サーバを30秒後に再起動します。");
+		BRUtils.announce(plugin, "サーバを30秒後に再起動します。");
     	Player[] players = plugin.getServer().getOnlinePlayers();
         for(int i = 0; i < players.length; i++){
             for(int j = 0; j < players.length; j++){
@@ -32,7 +32,7 @@ public class Ending extends BukkitRunnable {
 		for (int i = 30; i > 0; i--) {
 			try {
 				if(i <= 5 || i == 30 )
-					this.plugin.getServer().broadcastMessage(BRConst.MSG_IMPORTANT_NUM_COLOR+""+i);
+					BRUtils.announce(plugin, String.format("再起動まで%d秒", i));
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
 				System.out.println(e);

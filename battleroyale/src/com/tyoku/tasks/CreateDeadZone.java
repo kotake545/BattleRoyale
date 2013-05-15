@@ -3,7 +3,7 @@ package com.tyoku.tasks;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import com.tyoku.BattleRoyale;
-import com.tyoku.util.BRConst;
+import com.tyoku.util.BRUtils;
 
 public class CreateDeadZone extends BukkitRunnable {
 	private final BattleRoyale plugin;
@@ -16,11 +16,11 @@ public class CreateDeadZone extends BukkitRunnable {
 
 	@Override
 	public void run() {
-		this.plugin.getServer().broadcastMessage(BRConst.MSG_SYS_COLOR + "10秒後に禁止エリアを設定、さらに次回の禁止エリアを設定します。禁止エリアに居るプレイヤーは爆死します。");
+		BRUtils.announce(plugin, "10秒後に禁止エリアを設定、さらに次回の禁止エリアを設定します。禁止エリアに居るプレイヤーは爆死します。");
 		for (int i = 10; i > 0; i--) {
 			try {
 				if(i <= 5 )
-					this.plugin.getServer().broadcastMessage(BRConst.MSG_SYS_COLOR + "禁止エリア確定まで"+i+"秒。");
+					BRUtils.announce(plugin, "禁止エリア確定まで"+i+"秒。");
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
 				System.out.println(e);
@@ -39,6 +39,6 @@ public class CreateDeadZone extends BukkitRunnable {
 			this.plugin.getRandomMapBlocks().remove(0);
 		}
 
-		this.plugin.getServer().broadcastMessage(BRConst.MSG_SYS_COLOR + "禁止エリアと次回の予告エリアを設定しました。各自配布されたMAPを確認しましょう。");
+		BRUtils.announce(plugin, "禁止エリアと次回の予告エリアを設定しました。各自配布されたMAPを確認しましょう。");
 	}
 }

@@ -1,5 +1,8 @@
 package com.tyoku;
 
+import org.bukkit.Location;
+import org.bukkit.World;
+
 public class BRConfig {
 
 	private int gameGridSize = 0;
@@ -8,6 +11,10 @@ public class BRConfig {
 	private int classRoomPosZ = 1000;
 
 	public BRConfig() {
+	}
+
+	public Location getRoomLocation(World world){
+		return new Location(world, this.classRoomPosX, this.classRoomPosY, this.classRoomPosZ);
 	}
 
 	public int getGameGridSize() {

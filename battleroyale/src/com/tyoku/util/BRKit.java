@@ -60,6 +60,7 @@ public class BRKit {
     public static List<ItemStack> getArcherKit(){
         List<ItemStack> ret = new ArrayList<ItemStack>();
         ret.add(new ItemStack(Material.BOW,1));
+        ret.add(new ItemStack(Material.ARROW,10));
         ret.add(new ItemStack(Material.LEATHER,30));
         ItemStack item = new ItemStack(Material.POTION, 1);
         Potion pot = new Potion(PotionType.STRENGTH);
