@@ -1,6 +1,0 @@
-gamearea:
-  glid: 5
-deadarea:
-  interval:
-    second: 120
-    appenArea: 10
