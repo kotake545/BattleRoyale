@@ -3,6 +3,7 @@ package com.tyoku.listener;
 import java.util.logging.Logger;
 
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -117,6 +118,9 @@ public class BRPlayerListener implements Listener {
 
 	@EventHandler
 	public void onPlayerChangedWorld(BlockPlaceEvent event){
+		if(event.getPlayer().getGameMode().equals(GameMode.CREATIVE)){
+			return;
+		}
 		if(this.plugin.getBrManager().getGameStatus().equals(BRGameStatus.OPENING)){
 			event.setCancelled(true);
 		}
@@ -224,10 +228,13 @@ public class BRPlayerListener implements Listener {
 
 	@EventHandler
 	public void onBlockBreak(BlockBreakEvent event){
+		if(event.getPlayer().getGameMode().equals(GameMode.CREATIVE)){
+			return;
+		}
+		//ゲーム開始前の破壊活動は禁止
 		if(this.plugin.getBrManager().getGameStatus().equals(BRGameStatus.OPENING)){
 			event.setCancelled(true);
 		}
-
 		BRPlayer brp = this.plugin.getPlayerStat().get(event.getPlayer().getName());
 		if(brp == null || BRPlayerStatus.DEAD.equals(brp.getStatus())){
 			event.setCancelled(true);
@@ -254,6 +261,9 @@ public class BRPlayerListener implements Listener {
 
 	@EventHandler
 	public void onPlayerInteract(PlayerInteractEvent event){
+		if(event.getPlayer().getGameMode().equals(GameMode.CREATIVE)){
+			return;
+		}
 		BRPlayer brp = this.plugin.getPlayerStat().get(event.getPlayer().getName());
 		if (brp == null || BRPlayerStatus.DEAD.equals(brp.getStatus())) {
 			event.setCancelled(true);
@@ -262,6 +272,9 @@ public class BRPlayerListener implements Listener {
 
 	@EventHandler
 	public void onPlayerInteractEntity(PlayerInteractEntityEvent event){
+		if(event.getPlayer().getGameMode().equals(GameMode.CREATIVE)){
+			return;
+		}
 		BRPlayer brp = this.plugin.getPlayerStat().get(event.getPlayer().getName());
 		if (brp == null || BRPlayerStatus.DEAD.equals(brp.getStatus())) {
 			event.setCancelled(true);
@@ -276,6 +289,9 @@ public class BRPlayerListener implements Listener {
 
 	@EventHandler
 	public void onPlayerItemHeld(PlayerPickupItemEvent event) {
+		if(event.getPlayer().getGameMode().equals(GameMode.CREATIVE)){
+			return;
+		}
 		BRPlayer brp = this.plugin.getPlayerStat().get(event.getPlayer().getName());
 		if (brp == null || BRPlayerStatus.DEAD.equals(brp.getStatus())) {
 			event.setCancelled(true);
@@ -284,6 +300,9 @@ public class BRPlayerListener implements Listener {
 
 	@EventHandler
 	public void onPlayerQuit(PlayerQuitEvent event) {
+		if(event.getPlayer().getGameMode().equals(GameMode.CREATIVE)){
+			return;
+		}
 		BRUtils.setPlayerDeadMode(plugin, event.getPlayer());
 		if (!BRGameStatus.OPENING.equals(this.plugin.getBrManager().getGameStatus())) {
 			BRUtils.playerDeathProcess(plugin, event.getPlayer(), null);

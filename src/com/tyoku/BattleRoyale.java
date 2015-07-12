@@ -16,9 +16,13 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
+import com.tyoku.commands.BRBuildCmd;
+import com.tyoku.commands.BRBuildList;
 import com.tyoku.commands.BRMapChange;
 import com.tyoku.commands.BRTereport;
 import com.tyoku.commands.BrGame;
+import com.tyoku.commands.GameArea;
+import com.tyoku.commands.StartPosCmd;
 import com.tyoku.dto.BRBuilding;
 import com.tyoku.dto.BRGameStatus;
 import com.tyoku.dto.BRManager;
@@ -88,11 +92,11 @@ public class BattleRoyale extends JavaPlugin {
 
 		//コマンド登録
 		this.log.info("BattleRoyale commands preparing....");
-		//this.getCommand("setroom").setExecutor(new StartPosCmd(this));
+		this.getCommand("setroom").setExecutor(new StartPosCmd(this));
 		this.getCommand("brgame").setExecutor(new BrGame(this));
-		//this.getCommand("setbrarea").setExecutor(new GameArea(this));
-		//this.getCommand("brbuild").setExecutor(new BRBuildCmd(this));
-		//this.getCommand("brblist").setExecutor(new BRBuildList(this));
+		this.getCommand("setbrarea").setExecutor(new GameArea(this));
+		this.getCommand("brbuild").setExecutor(new BRBuildCmd(this));
+		this.getCommand("brblist").setExecutor(new BRBuildList(this));
 		this.getCommand("brvotemap").setExecutor(new BRMapChange(this));
 		this.getCommand("brtp").setExecutor(new BRTereport(this));
 
