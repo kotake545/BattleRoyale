@@ -79,10 +79,8 @@ public class BRBuildCmd extends BRCmdExe {
 						return true;
 					}
 
-					player.sendMessage(ChatColor.AQUA+ "*");
 					BRBuilding brb = new BRBuilding(player, args[1], this.plugin.getLocation1(), this.plugin.getLocation2(), this.plugin.getLocationBuild());
 
-					player.sendMessage(ChatColor.AQUA+ "**");
 					if(!brb.isCreatable()){
 						player.sendMessage(ChatColor.YELLOW + "建築するものがありません！");
 					}else if(brb.save(this.plugin)){
@@ -90,7 +88,6 @@ public class BRBuildCmd extends BRCmdExe {
 					}else{
 						player.sendMessage(ChatColor.YELLOW + "建築物の保存に失敗したかもー");
 					}
-					player.sendMessage(ChatColor.AQUA+ "****");
 					return true;
 				}
 
