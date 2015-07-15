@@ -19,6 +19,7 @@ import org.bukkit.block.Chest;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.material.Door;
 
 import com.tyoku.BattleRoyale;
 import com.tyoku.util.InventoryStringDeSerializer;
@@ -68,40 +69,51 @@ public class BRBuilding implements Serializable {
 		home.setX(homeX - x1);
 		home.setY(homeY - y1);
 		home.setZ(homeZ - z1);
-		//ブロック取得
-		buildblocks = new ArrayList<BRBuildBlock>();
-		for(int i = x2; i <= x1; i++){
-			for(int j = y2; j <= y1; j++){
-				for(int k = z2; k <= z1; k++){
-					BRBuildBlock brblock = new BRBuildBlock();
-					brblock.setX(x1 + i - homeX - homeX );
-					brblock.setY(y1 + j - homeY - homeY );
-					brblock.setZ(z1 + k - homeZ - homeZ );
+		try{
+			//ブロック取得
+			buildblocks = new ArrayList<BRBuildBlock>();
+			for(int i = x2; i <= x1; i++){
+				for(int j = y2; j <= y1; j++){
+					for(int k = z2; k <= z1; k++){
+						BRBuildBlock brblock = new BRBuildBlock();
+						brblock.setX(x1 + i - homeX - homeX );
+						brblock.setY(y1 + j - homeY - homeY );
+						brblock.setZ(z1 + k - homeZ - homeZ );
 
-					Block bl = player.getWorld().getBlockAt(i, j, k);
-					brblock.setType(bl.getType());
-					brblock.setBlockData(bl.getData());
-					brblock.setEmpty(bl.isEmpty());
+						Block bl = player.getWorld().getBlockAt(i, j, k);
+						brblock.setType(bl.getType());
+						brblock.setBlockData(bl.getData());
+						brblock.setEmpty(bl.isEmpty());
 
-					//インベントリの保管
-					if(!bl.isEmpty()){
-						if(bl.getType().equals(Material.CHEST)){
-						    Chest chest = (Chest)bl.getState();
-						    Inventory inventory = chest.getInventory();
-						    brblock.setInventoryStr(InventoryStringDeSerializer.InventoryToString(inventory));
+						//インベントリの保管
+						if(!bl.isEmpty()){
+							if(bl.getType().equals(Material.CHEST)){
+							    Chest chest = (Chest)bl.getState();
+							    Inventory inventory = chest.getInventory();
+							    brblock.setInventoryStr(InventoryStringDeSerializer.InventoryToString(inventory));
+							}
 						}
-					}
 
-					//看板の保管
-					if(bl.getType().equals(Material.SIGN_POST)){
-					    Sign sign = (Sign)bl.getState();
-					    brblock.setSignTexts(sign.getLines());
-					}
-					player.sendMessage(bl.getType().toString());
+						//看板の保管
+						if(bl.getType().equals(Material.SIGN_POST)){
+						    Sign sign = (Sign)bl.getState();
+						    brblock.setSignTexts(sign.getLines());
+						}
 
-					buildblocks.add(brblock);
+						//Faceの保管
+						if(bl.getType().equals(Material.WOODEN_DOOR)){
+							Door d = (Door) bl.getState().getData();
+						    brblock.setTopHalf( d.isTopHalf());
+						    brblock.setBlockFace(d.getFacing());
+						    brblock.setOpen(d.isOpen());
+						}
+
+						buildblocks.add(brblock);
+					}
 				}
 			}
+		}catch(Exception ex){
+			ex.printStackTrace();
 		}
 	}
 
@@ -136,6 +148,8 @@ public class BRBuilding implements Serializable {
 					|| Material.LADDER.equals(brb.getType())
 					|| Material.BED_BLOCK.equals(brb.getType())
 					|| Material.TRAP_DOOR.equals(brb.getType())
+					|| Material.TORCH.equals(brb.getType())
+					|| Material.SIGN_POST.equals(brb.getType())
 					){
 				afterBlock.add(brb);
 
@@ -153,29 +167,43 @@ public class BRBuilding implements Serializable {
 				    inventory.setContents(InventoryStringDeSerializer.StringToInventory(brb.getInventoryStr()).getContents());
 				}
 			}
-			if(wb.getType().equals(Material.SIGN_POST)){
-			    Sign sign = (Sign)wb.getState();
-			    String[] txts =  brb.getSignTexts();
-			    if(txts != null && txts.length > 0){
-			    	for(int i = 0; i < txts.length; i++){
-			    		sign.setLine(i, txts[i]);
-			    	}
-			    }
-			    sign.update();
-			}
 		}
 
 		Collections.sort(afterBlock, new BRBuildBlockComparator());
-		for(BRBuildBlock brb : afterBlock){
-			int xb = brb.getX() + xd;
-			int yb = brb.getY() + yd;
-			int zb = brb.getZ() + zd;
-			Block wb = world.getBlockAt(xb, yb, zb);
-			wb.setData(brb.getBlockData());
-			wb.setType(brb.getType());
-			wb.getState().update();
-		}
+		try{
+			for(BRBuildBlock brb : afterBlock){
+				int xb = brb.getX() + xd;
+				int yb = brb.getY() + yd;
+				int zb = brb.getZ() + zd;
+				Block wb = world.getBlockAt(xb, yb, zb);
 
+				wb.setData(brb.getBlockData());
+				wb.setType(brb.getType());
+
+				if(wb.getType().equals(Material.SIGN_POST)){
+				    Sign sign = (Sign)wb.getState();
+				    String[] txts =  brb.getSignTexts();
+				    if(txts != null && txts.length > 0){
+				    	for(int i = 0; i < txts.length; i++){
+				    		sign.setLine(i, txts[i]);
+				    	}
+				    }
+				    sign.update();
+				}
+
+				if(wb.getType().equals(Material.WOODEN_DOOR)){
+					if(brb.getBlockFace() != null){
+						Door d = (Door) wb.getState().getData();
+						d.setTopHalf(brb.isTopHalf());
+						d.setFacingDirection(brb.getBlockFace());
+						d.setOpen(brb.isOpen());
+					}
+				}
+			}
+
+		}catch(Exception ex){
+			ex.printStackTrace();
+		}
 
 		return true;
 	}

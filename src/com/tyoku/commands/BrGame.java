@@ -45,7 +45,7 @@ public class BrGame extends BRCmdExe {
 				return false;
 			}
 
-			if(BRUtils.getPlayerBalance(plugin) < 3){
+			if(BRUtils.getPlayerBalance(plugin) < 1){
 				p.sendMessage(ChatColor.RED + "ゲーム開始には最低3名のプレイヤーが必要です。");
 				return true;
 			}

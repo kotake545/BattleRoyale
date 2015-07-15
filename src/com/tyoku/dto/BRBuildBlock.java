@@ -3,6 +3,7 @@ package com.tyoku.dto;
 import java.io.Serializable;
 
 import org.bukkit.Material;
+import org.bukkit.block.BlockFace;
 
 public class BRBuildBlock implements Serializable{
 	private static final long serialVersionUID = 199035831519635924L;
@@ -15,6 +16,9 @@ public class BRBuildBlock implements Serializable{
 	private boolean isEmpty;
 	private String[] signTexts;
 	private String inventoryStr;
+	private BlockFace face;
+	private boolean isTopHalf;
+	private boolean isOpen;
 
 	public BRBuildBlock() {
 	}
@@ -82,4 +86,28 @@ public class BRBuildBlock implements Serializable{
 	public void setSignTexts(String[] signTexts) {
 		this.signTexts = signTexts;
 	}
+
+	public BlockFace getBlockFace(){
+		return this.face;
+	}
+
+	public void setBlockFace(BlockFace blockface){
+		this.face = blockface;
+	}
+	public boolean isTopHalf() {
+		return isTopHalf;
+	}
+
+	public void setTopHalf(boolean isTopHalf) {
+		this.isTopHalf = isTopHalf;
+	}
+
+	public boolean isOpen() {
+		return isOpen;
+	}
+
+	public void setOpen(boolean isOpen) {
+		this.isOpen = isOpen;
+	}
+
 }

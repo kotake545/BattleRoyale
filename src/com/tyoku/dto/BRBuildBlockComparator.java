@@ -9,10 +9,13 @@ public class BRBuildBlockComparator implements Comparator<BRBuildBlock> {
 		int ret = 0;
 		ret = o1.getType().compareTo(o2.getType());
 		if(ret == 0){
-			ret = o1.getX()+o1.getZ() - o2.getX()+o2.getZ();
+			ret = o1.getY() - o2.getY();
 		}
 		if(ret == 0){
-			ret = o1.getY() - o2.getY();
+			ret = o1.getX() - o2.getX();
+		}
+		if(ret == 0){
+			ret = o1.getZ() - o2.getZ();
 		}
 		return ret;
 	}

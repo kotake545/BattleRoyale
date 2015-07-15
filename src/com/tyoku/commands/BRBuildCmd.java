@@ -49,6 +49,7 @@ public class BRBuildCmd extends BRCmdExe {
 				//建築
 				if("create".equals(args[0])){
 					if(args.length != 2  && args.length != 3){
+						player.sendMessage(ChatColor.YELLOW + "引数の数に誤りがあります。");
 						return false;
 					}
 
@@ -67,6 +68,7 @@ public class BRBuildCmd extends BRCmdExe {
 				//保存
 				if("save".equals(args[0])){
 					if(args.length != 2){
+						player.sendMessage(ChatColor.YELLOW + "引数の数に誤りがあります。");
 						return false;
 					}
 
@@ -74,16 +76,21 @@ public class BRBuildCmd extends BRCmdExe {
 							|| this.plugin.getLocation2() == null
 							|| this.plugin.getLocationBuild() == null){
 						player.sendMessage(ChatColor.YELLOW + "ロケーション「１、２、ホーム」全て設定してください。");
+						return true;
 					}
 
+					player.sendMessage(ChatColor.AQUA+ "*");
 					BRBuilding brb = new BRBuilding(player, args[1], this.plugin.getLocation1(), this.plugin.getLocation2(), this.plugin.getLocationBuild());
+
+					player.sendMessage(ChatColor.AQUA+ "**");
 					if(!brb.isCreatable()){
-						player.sendMessage(ChatColor.YELLOW + "建築物の認識に失敗したかもー");
+						player.sendMessage(ChatColor.YELLOW + "建築するものがありません！");
 					}else if(brb.save(this.plugin)){
 						player.sendMessage(ChatColor.YELLOW + "建築物を保存しました："+brb.getName()+" ブロック数:"+brb.getBlockNum());
 					}else{
 						player.sendMessage(ChatColor.YELLOW + "建築物の保存に失敗したかもー");
 					}
+					player.sendMessage(ChatColor.AQUA+ "****");
 					return true;
 				}
 
