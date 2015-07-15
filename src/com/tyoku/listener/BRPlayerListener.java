@@ -69,62 +69,68 @@ public class BRPlayerListener implements Listener {
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		Player player = event.getPlayer();
 
-		// プリセット位置へプレイヤーを飛ばす
-		int x = this.plugin.getBrConfig().getClassRoomPosX();
-		int z = this.plugin.getBrConfig().getClassRoomPosZ();
-		int y = this.plugin.getBrConfig().getClassRoomPosY();
+		try{
+			// プリセット位置へプレイヤーを飛ばす
+			int x = this.plugin.getBrConfig().getClassRoomPosX();
+			int z = this.plugin.getBrConfig().getClassRoomPosZ();
+			int y = this.plugin.getBrConfig().getClassRoomPosY();
 
-		if (x == 1000 && y == 1000 && z == 1000) {
-			x = player.getLocation().getBlockX();
-			z = player.getLocation().getBlockZ() + 12;
-			y = player.getLocation().getBlockY() + 6;
-			this.plugin.getBrConfig().setClassRoomPosX(x);
-			this.plugin.getBrConfig().setClassRoomPosZ(z);
-			this.plugin.getBrConfig().setClassRoomPosY(y);
-		}
-		if (!this.plugin.isRoomCreated()) {
-			BRBuilding brb = this.plugin.getBrBuilding().get("home");
-			if (brb != null && brb.isCreatable()) {
-				brb.create(player.getWorld(), new Location(player.getWorld(), player.getLocation().getBlockX(),
-						player.getLocation().getBlockY(), player.getLocation().getBlockZ()), true);
-				player.getWorld().setSpawnLocation(x, y, z);
+			if (x == 1000 && y == 1000 && z == 1000) {
+				x = player.getLocation().getBlockX();
+				z = player.getLocation().getBlockZ() + 12;
+				y = player.getLocation().getBlockY() + 6;
+				this.plugin.getBrConfig().setClassRoomPosX(x);
+				this.plugin.getBrConfig().setClassRoomPosZ(z);
+				this.plugin.getBrConfig().setClassRoomPosY(y);
 			}
-			this.plugin.setRoomCreated(true);
-		}
-		World w = player.getWorld();
-		Location nLoc = new Location(w, x, y, z);
-		this.log.info(String.format("プレイヤーを(X:%d Y:%d Z:%d)へ転送", x, y, z));
-		player.teleport(nLoc);
-		BRUtils.clearPlayerStatus(player);
+			if (!this.plugin.isRoomCreated()) {
+				BRBuilding brb = this.plugin.getBrBuilding().get("classroom");
+				if (brb != null && brb.isCreatable()) {
+					brb.create(player.getWorld(), new Location(player.getWorld(), player.getLocation().getBlockX(),
+							player.getLocation().getBlockY(), player.getLocation().getBlockZ()), true);
+					player.getWorld().setSpawnLocation(x, y, z);
+				}
+				this.plugin.setRoomCreated(true);
+			}
+			World w = player.getWorld();
+			Location nLoc = new Location(w, x, y, z);
+			this.log.info(String.format("プレイヤーを(X:%d Y:%d Z:%d)へ転送", x, y, z));
+			player.teleport(nLoc);
+			BRUtils.clearPlayerStatus(player);
 
-		String appendMsg = "";
-		BRPlayer brps = new BRPlayer();
-		brps.setName(player.getName());
-		if (BRGameStatus.OPENING.equals(this.plugin.getBrManager().getGameStatus())) {
-			player.setDisplayName(BRConst.LIST_COLOR_PLAYER + player.getName());
-			player.setPlayerListName(player.getDisplayName());
-			// プレイヤーリスト作成
-			brps.setStatus(BRPlayerStatus.PLAYING);
-		} else {
-			brps.setStatus(BRPlayerStatus.DEAD);
-			player.setPlayerListName(BRConst.LIST_COLOR_DEAD + player.getName());
-			BRUtils.setPlayerDeadMode(plugin, player);
-			appendMsg = "ゲームは既に始まっています。次回、ご参加ください。";
-		}
-		this.plugin.getPlayerStat().put(brps.getName(), brps);
+			String appendMsg = "";
+			BRPlayer brps = new BRPlayer();
+			brps.setName(player.getName());
+			if (BRGameStatus.OPENING.equals(this.plugin.getBrManager().getGameStatus())) {
+				player.setDisplayName(BRConst.LIST_COLOR_PLAYER + player.getName());
+				player.setPlayerListName(player.getDisplayName());
+				// プレイヤーリスト作成
+				brps.setStatus(BRPlayerStatus.PLAYING);
+			} else {
+				brps.setStatus(BRPlayerStatus.DEAD);
+				player.setPlayerListName(BRConst.LIST_COLOR_DEAD + player.getName());
+				BRUtils.setPlayerDeadMode(plugin, player);
+				appendMsg = "ゲームは既に始まっています。次回、ご参加ください。";
+			}
+			this.plugin.getPlayerStat().put(brps.getName(), brps);
 
-		// インベントリを空にする。
-		player.getInventory().clear();
-		player.sendMessage(ChatColor.GOLD + "バトロワへようこそ！" + appendMsg);
-		player.sendMessage(ChatColor.GOLD + "現在βテスト公開してます。ご意見、ご要望などはSkype:tyoku123までメッセージをどうぞ！");
-		player.sendMessage(ChatColor.GOLD + "ソース公開、意見求む（汚いですが…）https://github.com/tyoku/battleroyale/");
-		player.sendMessage(ChatColor.GOLD + "開始時に配られる地図には禁止エリアと、赤い点でBR特製建造物があるかもしれません。");
-		player.sendMessage(ChatColor.GOLD + "コンパスは他の生存プレイヤーを指しているでしょう。");
-		player.sendMessage(ChatColor.GOLD + "ゲーム開始時にサバイバルグッズ入りのチェストをお渡しします。");
-		player.sendMessage(ChatColor.GOLD + "ゲーム開始コマンド:/brgame start");
-		player.sendMessage(ChatColor.GOLD + "ワールド変更投票:/brvotemap [yes|no]");
-		player.sendMessage(ChatColor.GOLD + "観戦用テレポート:/brtp <playername>");
-		player.sendMessage(ChatColor.GOLD + "さぁ、人を集めて" + ChatColor.RED + "殺し合い" + ChatColor.GOLD + "をしてください。");
+			// インベントリを空にする。
+			player.getInventory().clear();
+
+			player.sendMessage(ChatColor.GOLD + "バトロワへようこそ！" + appendMsg);
+			player.sendMessage(ChatColor.GOLD + "現在βテスト公開してます。ご意見、ご要望などはSkype:tyoku123までメッセージをどうぞ！");
+			player.sendMessage(ChatColor.GOLD + "ソース公開、意見求む（汚いですが…）https://github.com/tyoku/battleroyale/");
+			player.sendMessage(ChatColor.GOLD + "開始時に配られる地図には禁止エリアと、赤い点でBR特製建造物があるかもしれません。");
+			player.sendMessage(ChatColor.GOLD + "コンパスは他の生存プレイヤーを指しているでしょう。");
+			player.sendMessage(ChatColor.GOLD + "ゲーム開始時にサバイバルグッズ入りのチェストをお渡しします。");
+			player.sendMessage(ChatColor.GOLD + "ゲーム開始コマンド:/brgame start");
+			player.sendMessage(ChatColor.GOLD + "ワールド変更投票:/brvotemap [yes|no]");
+			player.sendMessage(ChatColor.GOLD + "観戦用テレポート:/brtp <playername>");
+			player.sendMessage(ChatColor.GOLD + "さぁ、人を集めて" + ChatColor.RED + "殺し合い" + ChatColor.GOLD + "をしてください。");
+		}catch(Exception ex){
+			System.out.println(ex.getStackTrace());
+		}
+
 	}
 
 	@EventHandler
@@ -270,6 +276,10 @@ public class BRPlayerListener implements Listener {
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		if (event.getPlayer().getGameMode().equals(GameMode.CREATIVE)) {
 			return;
+		}
+		// ゲーム開始前の活動は禁止
+		if (this.plugin.getBrManager().getGameStatus().equals(BRGameStatus.OPENING)) {
+			event.setCancelled(true);
 		}
 		BRPlayer brp = this.plugin.getPlayerStat().get(event.getPlayer().getName());
 		if (brp == null || BRPlayerStatus.DEAD.equals(brp.getStatus())) {

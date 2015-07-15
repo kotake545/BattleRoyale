@@ -2,10 +2,7 @@ package com.tyoku.commands;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Sound;
-import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -17,7 +14,6 @@ import com.tyoku.dto.BRPlayer;
 import com.tyoku.tasks.CreateDeadZone;
 import com.tyoku.tasks.FirstInvincibleTime;
 import com.tyoku.util.BRUtils;
-import com.tyoku.util.CommonUtil;
 
 public class BrGame extends BRCmdExe {
 
@@ -45,7 +41,8 @@ public class BrGame extends BRCmdExe {
 				return false;
 			}
 
-			if(BRUtils.getPlayerBalance(plugin) < 1){
+			if(BRUtils.getPlayerBalance(plugin) < 3){
+				System.out.println(BRUtils.getPlayerBalance(plugin));
 				p.sendMessage(ChatColor.RED + "ゲーム開始には最低3名のプレイヤーが必要です。");
 				return true;
 			}
@@ -57,46 +54,29 @@ public class BrGame extends BRCmdExe {
 
 			this.plugin.getBrManager().setGameStatus(BRGameStatus.PREPARE);
 
-			World world = this.plugin.getServer().getWorlds().get(0);
-
-			//教室の出口破壊
-		    int x = this.plugin.getBrConfig().getClassRoomPosX();
-		    int z = this.plugin.getBrConfig().getClassRoomPosZ()-5;
-		    int y = this.plugin.getBrConfig().getClassRoomPosY();
-		    for(int i = 0; i < 3; i++){
-		    	world.getBlockAt(x, y+i, z).breakNaturally();
-		    }
-		    Location location = world.getBlockAt(x, y, z).getLocation();
-
-		    //音を聞かせる
-		    world.playSound(location, Sound.GLASS, 10, 1);
-		    //BRUtils.soundAllPlayer(plugin, Effect.ZOMBIE_DESTROY_DOOR);
-
-
-			Player[] ps = CommonUtil.getOnlinePlayers();
-
 			//参加者にバトロワMAPとアイテム配布
-			for(int i = 0; i < ps.length; i++){
+		    int i = 0;
+		    for(Player plr : this.plugin.getServer().getOnlinePlayers()){
 				//コンパスのターゲットを設定
-				String pname = BRUtils.getRandomPlayer(plugin, ps[i].getName());
-				BRPlayer brp = plugin.getPlayerStat().get(ps[i].getName());
+				String pname = BRUtils.getRandomPlayer(plugin, plr.getName());
+				BRPlayer brp = plugin.getPlayerStat().get(plr.getName());
 				//Bukkit.broadcastMessage(ps[i].getName() + " -> "+ pname);
 				if(brp == null){
 					Bukkit.broadcastMessage("brpはnull");
 				}
 				brp.setCompassName(pname);
 
-				ps[i].getInventory().addItem(new ItemStack(Material.CHEST,1));
-				ps[i].getInventory().addItem(new ItemStack(Material.TORCH,10));
-				ps[i].getInventory().addItem(BRUtils.getBRMap(this.plugin, ps[i], (short)i));
+				plr.getInventory().addItem(new ItemStack(Material.CHEST,1));
+				plr.getInventory().addItem(new ItemStack(Material.TORCH,10));
+				plr.getInventory().addItem(BRUtils.getBRMap(this.plugin, plr, (short)i++));
 			}
 
 			//禁止エリア作成非同期処理
 			int intervalSecond = plugin.getConfig().getInt("deadarea.interval.second");
 			int intervalArea = plugin.getConfig().getInt("deadarea.interval.appenArea");
 			if(intervalSecond == 0){
-				plugin.getConfig().set("deadarea.interval.second", 120);
-				intervalSecond = 120;
+				plugin.getConfig().set("deadarea.interval.second", 60);
+				intervalSecond = 60;
 				plugin.saveConfig();
 			}
 			if(intervalArea == 0){
