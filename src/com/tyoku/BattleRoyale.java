@@ -161,7 +161,7 @@ public class BattleRoyale extends JavaPlugin {
 			int j = 0;
 			for(BRBuilding brb : this.brBuilding.values()){
 				if(j++ == bItem){
-					if("home".equals(brb.getName()) || "lastbattle".equals(brb.getName())){
+					if("classroom".equals(brb.getName()) || "lastbattle".equals(brb.getName())){
 						buildNum++;
 						break;
 					}

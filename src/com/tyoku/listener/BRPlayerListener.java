@@ -177,7 +177,7 @@ public class BRPlayerListener implements Listener {
 		Player[] ps = CommonUtil.getOnlinePlayers();
 		for (int i = 0; i < ps.length; i++) {
 			BRPlayer tmpbrp = plugin.getPlayerStat().get(ps[i].getName());
-			log.info("CompassAllow:" + player.getName() + " -> " + ps[i].getName());
+			//log.info("CompassAllow:" + player.getName() + " -> " + ps[i].getName());
 			if (tmpbrp != null && !tmpbrp.getStatus().equals(BRPlayerStatus.DEAD)
 					&& tmpbrp.getCompassName().equals(player.getName())) {
 				ps[i].setCompassTarget(player.getLocation());

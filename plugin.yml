@@ -1,4 +1,4 @@
-name: battleroyale
+name: BattleRoyale
 main: com.tyoku.BattleRoyale
 version: 0.1.0
 commands:
