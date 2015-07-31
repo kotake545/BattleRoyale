@@ -77,7 +77,6 @@ public class Ending extends BukkitRunnable {
 			return false;
 		}
 		try {
-            this.plugin.getServer().dispatchCommand(this.plugin.getServer().getConsoleSender(), "save-all");
             this.plugin.getServer().dispatchCommand(this.plugin.getServer().getConsoleSender(), "stop");
 		} catch (Exception e) {
 			this.plugin.getLogger().info("Something went wrong while saving & stoping!");

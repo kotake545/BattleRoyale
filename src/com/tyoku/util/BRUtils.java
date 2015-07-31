@@ -341,9 +341,9 @@ public class BRUtils {
         //共通支給品
         ret.add(new ItemStack(Material.POTION, 1));
         ret.add(new ItemStack(Material.BREAD, 5));
+        ret.add(new ItemStack(Material.WATER, 1));
         ret.add(new ItemStack(Material.COMPASS, 1));
-        ret.add(new ItemStack(Material.STONE_SWORD, 1));
-        ret.add(new ItemStack(Material.LEATHER, 16));
+        ret.add(new ItemStack(Material.WATCH, 1));
         ret.add(new ItemStack(Material.WORKBENCH, 1));
         Random rand = new Random();
 
