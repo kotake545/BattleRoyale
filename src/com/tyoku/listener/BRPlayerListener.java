@@ -9,16 +9,15 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
@@ -216,24 +215,45 @@ public class BRPlayerListener implements Listener {
 
 	@EventHandler
 	public void onEntityDamage(EntityDamageEvent event) {
+		if (!(event.getEntity() instanceof Player)) {
+			return;
+		}
 
 		// プレイヤーへのダメージ制限
 		if (!this.plugin.getBrManager().getGameStatus().equals(BRGameStatus.PLAYING)) {
-			if (EntityType.PLAYER.equals(event.getEntityType())) {
-				event.setCancelled(true);
-			}
+			event.setCancelled(true);
 		}
 
 		// 死者からのダメージ制限
-		if (DamageCause.ENTITY_ATTACK.equals(event.getCause())) {
-			if (event instanceof EntityDamageByEntityEvent) {
-				EntityDamageByEntityEvent e = (EntityDamageByEntityEvent) event;
-				if (e.getDamager() instanceof Player) {
-					Player player = (Player) e.getDamager();
-					BRPlayer brp = this.plugin.getPlayerStat().get(player.getName());
-					if (brp == null || BRPlayerStatus.DEAD.equals(brp.getStatus())) {
-						event.setCancelled(true);
-					}
+		if (event instanceof EntityDamageByEntityEvent) {
+			EntityDamageByEntityEvent e = (EntityDamageByEntityEvent) event;
+			if (e.getDamager() instanceof Player) {
+				Player player = (Player) e.getDamager();
+				BRPlayer brp = this.plugin.getPlayerStat().get(player.getName());
+				if (brp == null || BRPlayerStatus.DEAD.equals(brp.getStatus())) {
+					event.setCancelled(true);
+				}
+			}
+		}
+	}
+
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void onPlayerDamage(EntityDamageEvent event){
+		if (!(event.getEntity() instanceof Player)) {
+			return;
+		}
+		// プレイヤーへのダメージ制限
+		if (!this.plugin.getBrManager().getGameStatus().equals(BRGameStatus.PLAYING)) {
+			event.setCancelled(true);
+		}
+		// 死者からのダメージ制限
+		if (event instanceof EntityDamageByEntityEvent) {
+			EntityDamageByEntityEvent e = (EntityDamageByEntityEvent) event;
+			if (e.getDamager() instanceof Player) {
+				Player player = (Player) e.getDamager();
+				BRPlayer brp = this.plugin.getPlayerStat().get(player.getName());
+				if (brp == null || BRPlayerStatus.DEAD.equals(brp.getStatus())) {
+					event.setCancelled(true);
 				}
 			}
 		}

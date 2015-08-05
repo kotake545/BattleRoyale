@@ -472,25 +472,8 @@ public class BRUtils {
 				}
 			}
 			if(pb == 2){
-				BRUtils.announce(plugin, "残りプレイヤー2名になりましたので、ラストバトルへ移行します。");
-				BRUtils.createLastStage(plugin);
-				plugin.setLastbattle(true);
-				plugin.getDeadAreaBlocks().clear();
-				plugin.getRandomMapBlocks().clear();
-				plugin.getNextAreaBlocks().clear();
-
-		    	int cnt = 1;
-		    	Player[] ps = CommonUtil.getOnlinePlayers();
-		    	for(BRPlayer p : plugin.getPlayerStat().values()){
-		    		if(BRPlayerStatus.PLAYING.equals(p.getStatus())){
-		    			for(int i = 0; i < ps.length; i++){
-		    				if(ps[i].getName().equals(p.getName())){
-		    					BRUtils.setLastBattlePlayer(plugin, ps[i], cnt++);
-		    					break;
-		    				}
-		    			}
-		    		}
-		    	}
+				//決着
+				BRUtils.setLastBattle(plugin,player.getWorld());
 			}
 
 		}else if(pb == 0){
@@ -507,6 +490,51 @@ public class BRUtils {
 					"ゲーム終了・・・優勝者は【"+ChatColor.GOLD+"%s"+BRConst.MSG_SYS_COLOR+"】です！おめでとう！！", winner));
 			plugin.setCreateEnding(new Ending(plugin).runTask(plugin));
 		}
+    }
+
+    /**
+     * 最終バトルステージを作成
+     * @param plugin
+     * @param world
+     */
+    static public void setLastBattle(BattleRoyale plugin, World world){
+		BRUtils.announce(plugin, "残りプレイヤー2名になりましたので、ラストバトルへ移行します。");
+		//BRUtils.createLastStage(plugin);
+		//'plugin.setLastbattle(true);
+		plugin.getDeadAreaBlocks().clear();
+		plugin.getRandomMapBlocks().clear();
+		plugin.getNextAreaBlocks().clear();
+
+		int x = plugin.getBrConfig().getClassRoomPosX();
+		int z = plugin.getBrConfig().getClassRoomPosZ();
+		int y = plugin.getBrConfig().getClassRoomPosY();
+		Location loc = new Location(world, x, y, z);
+
+
+    	//プレイヤー全員中央へ飛ばす
+    	Player[] ps = CommonUtil.getOnlinePlayers();
+    	for(BRPlayer p : plugin.getPlayerStat().values()){
+    		if(BRPlayerStatus.PLAYING.equals(p.getStatus())){
+    			for(int i = 0; i < ps.length; i++){
+    				if(ps[i].getName().equals(p.getName())){
+    					ps[i].teleport(loc);
+    					break;
+    				}
+    			}
+    		}
+    	}
+
+		//中央をデッドエリアで囲む
+		plugin.getDeadAreaBlocks().add("f5");
+		plugin.getDeadAreaBlocks().add("f6");
+		plugin.getDeadAreaBlocks().add("f7");
+		plugin.getDeadAreaBlocks().add("g5");
+		plugin.getDeadAreaBlocks().add("g7");
+		plugin.getDeadAreaBlocks().add("h5");
+		plugin.getDeadAreaBlocks().add("h6");
+		plugin.getDeadAreaBlocks().add("h7");
+		BRUtils.announce(plugin, "中央の区画の周りは禁止エリアです。殺しあってください。");
+
     }
 
     /**
