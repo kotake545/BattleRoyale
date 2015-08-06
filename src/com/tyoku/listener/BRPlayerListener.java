@@ -34,6 +34,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import com.tyoku.BattleRoyale;
+import com.tyoku.Packet.ParticleAPI;
 import com.tyoku.dto.BRBuilding;
 import com.tyoku.dto.BRGameStatus;
 import com.tyoku.dto.BRPlayer;
@@ -167,8 +168,13 @@ public class BRPlayerListener implements Listener {
 		Player player = event.getPlayer();
 		BRPlayer brp = this.plugin.getPlayerStat().get(player.getName());
 
-		if (brp == null || !player.isOnline() || BRPlayerStatus.DEAD.equals(brp.getStatus())
+		if (brp == null || !player.isOnline()
 				|| !BRGameStatus.PLAYING.equals(this.plugin.getBrManager().getGameStatus())) {
+			return;
+		}
+
+		if (BRPlayerStatus.DEAD.equals(brp.getStatus())){
+			ParticleAPI.sendPlayer(player, ParticleAPI.EnumParticle.WATER_BUBBLE, player.getEyeLocation(), 0.3f,0.3f,0.3f, 0.3f, 10);
 			return;
 		}
 
