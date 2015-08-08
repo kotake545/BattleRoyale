@@ -21,6 +21,7 @@ import org.bukkit.map.MapView;
 import org.bukkit.map.MapView.Scale;
 import org.bukkit.potion.PotionEffect;
 
+import com.github.kotake545.spectator.SpectatorUtil;
 import com.tyoku.BattleRoyale;
 import com.tyoku.dto.BRGameStatus;
 import com.tyoku.dto.BRPlayer;
@@ -401,24 +402,6 @@ public class BRUtils {
         }
     }
 
-    static public void setPlayerDeadMode(BattleRoyale plugin, Player player){
-    	clearPlayerStatus(player);
-    	if(plugin.getPlayerStat().get(player.getName()) == null){
-    		BRPlayer brp = new BRPlayer();
-    		brp.setName(player.getName());
-    		plugin.getPlayerStat().put(player.getName(), brp);
-    	}
-    	plugin.getPlayerStat().get(player.getName()).setStatus(BRPlayerStatus.DEAD);
-    	//plugin.getPlayerStat().remove(player.getName());
-		player.setDisplayName(BRConst.LIST_COLOR_DEAD + player.getName());
-		player.setPlayerListName(player.getDisplayName());
-    	player.setAllowFlight(true);
-    	Player[] players = CommonUtil.getOnlinePlayers();
-        for(int i = 0; i < players.length; i++){
-        	players[i].hidePlayer(player);
-        }
-    }
-
     /**
      * 残存プレイヤー数を返す
      * @param plugin
@@ -426,10 +409,11 @@ public class BRUtils {
      */
     static public int getPlayerBalance(BattleRoyale plugin){
     	int cnt = 0;
-    	for(BRPlayer p : plugin.getPlayerStat().values()){
-    		if(BRPlayerStatus.PLAYING.equals(p.getStatus()))
-    			cnt++;
-    	}
+		Player[] ps = CommonUtil.getOnlinePlayers();
+		for(int i = 0; i < ps.length; i++){
+			if(!SpectatorUtil.checkSpectator(ps[i]))
+				cnt++;
+		}
     	return cnt;
     }
 
@@ -456,15 +440,15 @@ public class BRUtils {
     	if(plugin.getBrManager().getGameStatus().equals(BRGameStatus.END)){
     		return;
     	}
+		if(kickMsg != null){
+			player.kickPlayer(kickMsg);
+		}
 
-		int pb = BRUtils.getPlayerBalance(plugin);
+		int pb = BRUtils.getPlayerBalance(plugin) ;
 		if(pb > 1){
 			String msg = String.format(
 					"%sが死亡しました。【残り%d人】", player.getName(),pb);
 			BRUtils.announce(plugin, msg);
-			if(kickMsg != null){
-				player.kickPlayer(kickMsg);
-			}
 			//死んだプレイヤーをさしてたコンパスを修正
 			for(BRPlayer brp : plugin.getPlayerStat().values()){
 				if(brp.getCompassName() != null && brp.getCompassName().equals(player.getName())){

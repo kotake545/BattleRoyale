@@ -33,6 +33,7 @@ import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
+import com.github.kotake545.spectator.SpectatorUtil;
 import com.tyoku.BattleRoyale;
 import com.tyoku.Packet.ParticleAPI;
 import com.tyoku.dto.BRBuilding;
@@ -108,8 +109,8 @@ public class BRPlayerListener implements Listener {
 				brps.setStatus(BRPlayerStatus.PLAYING);
 			} else {
 				brps.setStatus(BRPlayerStatus.DEAD);
+				SpectatorUtil.setSpectator(player); //観戦させる
 				player.setPlayerListName(BRConst.LIST_COLOR_DEAD + player.getName());
-				BRUtils.setPlayerDeadMode(plugin, player);
 				appendMsg = "ゲームは既に始まっています。次回、ご参加ください。";
 			}
 			this.plugin.getPlayerStat().put(brps.getName(), brps);
@@ -118,14 +119,13 @@ public class BRPlayerListener implements Listener {
 			player.getInventory().clear();
 
 			player.sendMessage(ChatColor.GOLD + "バトロワへようこそ！" + appendMsg);
-			player.sendMessage(ChatColor.GOLD + "現在βテスト公開してます。ご意見、ご要望などはSkype:tyoku123までメッセージをどうぞ！");
+			player.sendMessage(ChatColor.GOLD + "現在テスト公開してます。ご意見、ご要望などはSkype:tyoku123までメッセージをどうぞ！");
 			player.sendMessage(ChatColor.GOLD + "ソース公開、意見求む（汚いですが…）https://github.com/tyoku/battleroyale/");
 			player.sendMessage(ChatColor.GOLD + "開始時に配られる地図には禁止エリアと、赤い点でBR特製建造物があるかもしれません。");
 			player.sendMessage(ChatColor.GOLD + "コンパスは他の生存プレイヤーを指しているでしょう。");
 			player.sendMessage(ChatColor.GOLD + "ゲーム開始時にサバイバルグッズ入りのチェストをお渡しします。");
 			player.sendMessage(ChatColor.GOLD + "ゲーム開始コマンド:/brgame start");
 			player.sendMessage(ChatColor.GOLD + "ワールド変更投票:/brvotemap [yes|no]");
-			player.sendMessage(ChatColor.GOLD + "観戦用テレポート:/brtp <playername>");
 			player.sendMessage(ChatColor.GOLD + "さぁ、人を集めて" + ChatColor.RED + "殺し合い" + ChatColor.GOLD + "をしてください。");
 		}catch(Exception ex){
 			System.out.println(ex.getStackTrace());
@@ -283,7 +283,6 @@ public class BRPlayerListener implements Listener {
 	@EventHandler
 	public void onPlayerDeath(PlayerDeathEvent event) {
 		Player player = event.getEntity();
-		BRUtils.setPlayerDeadMode(plugin, player);
 		BRUtils.playerDeathProcess(plugin, player, event.getDeathMessage());
 	}
 
@@ -345,8 +344,11 @@ public class BRPlayerListener implements Listener {
 		if (event.getPlayer().getGameMode().equals(GameMode.CREATIVE)) {
 			return;
 		}
-		BRUtils.setPlayerDeadMode(plugin, event.getPlayer());
 		if (!BRGameStatus.OPENING.equals(this.plugin.getBrManager().getGameStatus())) {
+			BRPlayer brp = this.plugin.getPlayerStat().get(event.getPlayer().getName());
+			if (brp == null || BRPlayerStatus.DEAD.equals(brp.getStatus())) {
+				return;
+			}
 			BRUtils.playerDeathProcess(plugin, event.getPlayer(), null);
 		}
 	}

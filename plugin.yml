@@ -20,6 +20,3 @@ commands:
    brvotemap:
       description: ワールドを再作成するか否かの意思を示します。賛成割合や人数により、ワールド再構築のためにサーバを落とします。
       usage: /brvotemap <yes|no>
-   brtp:
-      description: 観戦者コマンド。指定のプレイヤーにテレポート
-      usage: /brtp <playerName>
